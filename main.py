@@ -7,6 +7,7 @@ import json
 import os
 
 if os.path.exists(os.getcwd() + "/config.json") :
+    #pass //this is a dummy pass to generate a json file that will secure the bot's token
     with open("./config.json") as f:
         configData = json.load(f)
 else:
@@ -40,5 +41,5 @@ async def rayjay(interaction: discord.Interaction):
 async def say(interaction: discord.Interaction, thing_to_say: str):
     await interaction.response.send_message(f"{interaction.user.name} said: {thing_to_say}")
 
-bot.run('MTExNjY5ODc1NjA0NjM4OTMwMA.G6Ky6f.TO6UmhLPB00liJyoIYXtCfy3FKwLawOyVHMRu8')
+bot.run(token)
 
