@@ -168,7 +168,6 @@ cython_debug/
 #Personal Config
 /config.json
 /discloud.config
-/requirements.txt
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
