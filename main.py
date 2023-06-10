@@ -36,6 +36,10 @@ async def on_ready():
 async def rayjay(interaction: discord.Interaction):
     await interaction.response.send_message(f"Hey there little {interaction.user.mention}! it's Ray Jay time! RAYJAY RAYJAY RAYJAY")
 
+@bot.tree.command(name="battlecry")
+async def rayjay(interaction: discord.Interaction):
+    await interaction.response.send_message(f"BROTHERS OF THE NORTHERN REGION JOIN ME INTO BATTLE TO BREAK FATHER CALEBS LEGS!!!  ...both of them")
+
 @bot.tree.command(name="say")
 @app_commands.describe(thing_to_say= "user input")
 async def say(interaction: discord.Interaction, thing_to_say: str):
