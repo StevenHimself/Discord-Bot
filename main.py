@@ -37,8 +37,12 @@ async def rayjay(interaction: discord.Interaction):
     await interaction.response.send_message(f"Hey there little {interaction.user.mention}! it's Ray Jay time! RAYJAY RAYJAY RAYJAY")
 
 @bot.tree.command(name="battlecry")
-async def rayjay(interaction: discord.Interaction):
+async def battlecry(interaction: discord.Interaction):
     await interaction.response.send_message(f"BROTHERS OF THE NORTHERN REGION JOIN ME INTO BATTLE TO BREAK FATHER CALEB'S LEGS!!!  ...both of them")
+
+@bot.tree.command(name="littlegirl")
+async def littlegirl(interaction: discord.Interaction):
+    await interaction.response.send_message(f"OH MY GOODNESS!")
 
 @bot.tree.command(name="say")
 @app_commands.describe(thing_to_say= "user input")
