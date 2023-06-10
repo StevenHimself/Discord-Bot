@@ -25,7 +25,7 @@ async def on_ready():
     print("Bot online, Beep Boop.")
     try:
         synced = await bot.tree.sync()
-        print(f"Synced{len(synced)} command(s)")
+        print(f"Synced {len(synced)} command(s)")
     except Exception as e:
         print(e)
 
@@ -72,6 +72,12 @@ async def dog_pic(interaction : discord.Interaction) :
             embed = discord.Embed(title="Dog", color=discord.Colour.green())
             embed.set_image(url= dog['url'])
             await interaction.followup.send(embed=embed)
+
+@bot.tree.error
+async def on_app_command_error(interaction: discord.Interaction, error : app_commands.AppCommandError):
+    if isinstance(error,app_commands.CommandOnCooldown):
+        await interaction.response.send_message(error, ephemeral=True)
+    else: raise error
 
 bot.run(token)
 
