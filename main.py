@@ -30,22 +30,27 @@ async def on_ready():
         print(e)
 
 #text based commands
-@bot.tree.command(name="rayjay")
+@bot.tree.command(name="rayjay", description="It's going to be RayJay time!")
 async def rayjay(interaction: discord.Interaction):
     await interaction.response.send_message(f"Hey there little {interaction.user.mention}! it's Ray Jay time! RAYJAY RAYJAY RAYJAY")
 
-@bot.tree.command(name="battlecry")
+@bot.tree.command(name="battlecry", description="Join Dustin into battle!")
 async def battlecry(interaction: discord.Interaction):
-    await interaction.response.send_message(f"{interaction.user.mention} BROTHERS OF THE NORTHERN REGION JOIN ME INTO BATTLE TO BREAK FATHER CALEB'S LEGS!!!  ...both of them")
+    await interaction.response.send_message(f"BROTHERS OF THE NORTHERN REGION JOIN ME INTO BATTLE TO BREAK FATHER CALEB'S LEGS!!!  ...both of them")
 
-@bot.tree.command(name="littlegirl")
+@bot.tree.command(name="littlegirl", description="Steph's catchphrase")
 async def littlegirl(interaction: discord.Interaction):
     await interaction.response.send_message(f"{interaction.user.mention} OH MY GOODNESS!")
 
-@bot.tree.command(name="say")
+@bot.tree.command(name="say", description="Repeats your input")
 @app_commands.describe(thing_to_say= "user input")
 async def say(interaction: discord.Interaction, thing_to_say: str):
     await interaction.response.send_message(f"{interaction.user.name} said: {thing_to_say}")
+
+@bot.tree.command(name="pauliejoke", description="Repeats your joke with a Sopranos twist!")
+@app_commands.describe(thing_to_say= "user input")
+async def say(interaction: discord.Interaction, paulie_joke: str):
+    await interaction.response.send_message(f"Ay Ton' you hear what I said? I said {paulie_joke} HEH HEH")
 
 
 #image based commands
