@@ -48,7 +48,7 @@ async def say(interaction: discord.Interaction, thing_to_say: str):
     await interaction.response.send_message(f"{interaction.user.name} said: {thing_to_say}")
 
 @bot.tree.command(name="pauliejoke", description="Repeats your joke with a Sopranos twist!")
-@app_commands.describe(thing_to_say= "user input")
+@app_commands.describe(paulie_joke= "user input")
 async def say(interaction: discord.Interaction, paulie_joke: str):
     await interaction.response.send_message(f"Ay Ton' you hear what I said? I said {paulie_joke} HEH HEH")
 
