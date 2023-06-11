@@ -54,7 +54,7 @@ async def say(interaction: discord.Interaction, paulie_joke: str):
 
 
 #image based commands
-@bot.tree.command(name="cat", description="Generates a random cat pic")
+@bot.tree.command(name="cat", description="Generates a random cat image/gif")
 @app_commands.checks.cooldown(1,5,key = lambda i : (i.user.id))
 async def catpic(interaction : discord.Interaction): 
     await interaction.response.defer()
@@ -62,24 +62,24 @@ async def catpic(interaction : discord.Interaction):
         async with session.get('https://api.thecatapi.com/v1/images/search') as response:
             raw = await response.text()
             cat = json.loads(raw)[0]
-            embed = discord.Embed(title="Cat", color=discord.Colour.random())
+            embed = discord.Embed(title="Cat", color=discord.Colour.red())
             embed.set_image(url= cat['url'])
             await interaction.followup.send(embed=embed)
 
-@bot.tree.command(name="dog", description="Generates a random dog pic")
+@bot.tree.command(name="dog", description="Generates a random dog image/gif")
 @app_commands.checks.cooldown(1,5,key = lambda i : (i.user.id))
 async def dogpic(interaction : discord.Interaction): 
     await interaction.response.defer()
     async with aiohttp.ClientSession() as session:
         async with session.get('https://dog.ceo/api/breeds/image/random') as response:
             raw = await response.text()
-            dog = json.loads(raw)[0]
-            embed = discord.Embed(title="Dog", color=discord.Colour.random())
-            embed.set_image(url= dog['url'])
+            dog = json.loads(raw)
+            embed = discord.Embed(title="Dog", color=discord.Colour.green())
+            embed.set_image(url= dog['message'])
             await interaction.followup.send(embed=embed)
 
 @bot.tree.error
-async def on_app_command_error(interaction: discord.Interaction, error : app_commands.AppCommandError):
+async def on_app_command_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
     if isinstance(error,app_commands.CommandOnCooldown):
         await interaction.response.send_message(error, ephemeral=True)
     else: raise error
