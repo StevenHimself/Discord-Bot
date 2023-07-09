@@ -167,6 +167,7 @@ cython_debug/
 
 #Personal Config
 /config.json
+/.env
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
