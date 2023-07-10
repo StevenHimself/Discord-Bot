@@ -4,19 +4,18 @@ import discord, aiohttp, json, os, emoji
 from discord import app_commands
 from discord.ext import commands
 
-# secure token
-if os.path.exists(os.getcwd() + "/config.json"):
-    # pass //this is a dummy pass to generate a json file that will secure the bot's token
-    with open("./config.json") as f:
-        configData = json.load(f)
-else:
-    configTemplate = {"Token": "", "Prefix": "!"}
-
+#creating json.config and securing token
+if not os.path.exists(os.getcwd() + "/config.json"):
+    configTemplate = {"TOKEN": "", "PREFIX": "!"}
     with open(os.getcwd() + "/config.json", "w+") as f:
         json.dump(configTemplate, f)
-
-token = configData["Token"]
-prefix = configData["Prefix"]
+else:
+    with open("./config.json") as f:
+        configData = json.load(f)
+    
+#assigning external variables from config.json
+token = configData["TOKEN"]
+prefix = configData["PREFIX"]
 
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all(), application_id=1116698756046389300)
 
@@ -60,6 +59,41 @@ async def say(interaction: discord.Interaction, thing_to_say: str):
 @app_commands.describe(paulie_joke="user input")
 async def say(interaction: discord.Interaction, paulie_joke: str):
     await interaction.response.send_message(f"Ay Ton' you hear what I said? I said {paulie_joke} HEH HEH")
+
+
+@bot.tree.command(name="quote", description="Generates a random quote!")
+@app_commands.checks.cooldown(1, 5, key=lambda i: (i.user.id))
+async def quote(interaction: discord.Interaction, category: str):
+    await interaction.response.defer()
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f'https://api.api-ninjas.com/v1/quotes?category={category}', headers={'X-Api-Key' : '26hgo+xM8kjRhaavCUsEgQ==dsGnrqp1zdGqwDYS'}) as response:
+            raw = await response.text()
+            quotemap = json.loads(raw)[0]
+            quote = quotemap["quote"]
+            author = quotemap["author"]
+            category = quotemap["category"]
+            match category:
+                case "happiness":
+                    category = " ".join(emoji.emojize(":grinning_face:"))
+                case "birthday":
+                    category = " ".join(emoji.emojize(":birthday_cake:"))
+                case "inspirational":
+                    category = " ".join(emoji.emojize(":raised_fist:"))
+                case "death":
+                    category = " ".join(emoji.emojize(":skull:"))
+                case "alone":
+                    category = " ".join(emoji.emojize(":crying_face:"))
+                case "intelligence":
+                    category = " ".join(emoji.emojize(" " + ":nerd_face:"))
+                case "movies":
+                    category = " ".join(emoji.emojize(":clapper_board:"))
+                case "failure":
+                    category = " ".join(emoji.emojize(":pensive_face:"))
+                case "knowledge":
+                    category = " ".join(emoji.emojize(":books:"))
+                case "love":
+                    category = " ".join(emoji.emojize(":growing_heart:"))
+            await interaction.followup.send(f"\n**Category**: {category.upper()}\n\n*{quote}*\n***-{author}***")
 
 
 # image/gif based commands
