@@ -4,7 +4,7 @@ import discord, aiohttp, json, os, emoji
 from discord import app_commands
 from discord.ext import commands
 
-#creating json.config and securing token
+# creating json.config and securing token
 if not os.path.exists(os.getcwd() + "/config.json"):
     configTemplate = {"TOKEN": "", "PREFIX": "!"}
     with open(os.getcwd() + "/config.json", "w+") as f:
@@ -12,8 +12,8 @@ if not os.path.exists(os.getcwd() + "/config.json"):
 else:
     with open("./config.json") as f:
         configData = json.load(f)
-    
-#assigning external variables from config.json
+
+# assigning external variables from config.json
 token = configData["TOKEN"]
 prefix = configData["PREFIX"]
 
@@ -61,39 +61,90 @@ async def say(interaction: discord.Interaction, paulie_joke: str):
     await interaction.response.send_message(f"Ay Ton' you hear what I said? I said {paulie_joke} HEH HEH")
 
 
-@bot.tree.command(name="quote", description="Generates a random quote!")
-@app_commands.checks.cooldown(1, 5, key=lambda i: (i.user.id))
-async def quote(interaction: discord.Interaction, category: str):
+@bot.tree.command(name="quote", description="Generates a random quote from multiple categories!")
+@app_commands.checks.cooldown(1, 5, key=lambda i: i.user.id)
+@app_commands.choices(categories=[app_commands.Choice(name="anger", value="anger"),
+                                  app_commands.Choice(name="art", value="art"),
+                                  app_commands.Choice(name="change", value="change"),
+                                  app_commands.Choice(name="courage", value="courage"),
+                                  app_commands.Choice(name="experience", value="experience"),
+                                  app_commands.Choice(name="failure", value="failure"),
+                                  app_commands.Choice(name="family", value="family"),
+                                  app_commands.Choice(name="fear", value="fear"),
+                                  app_commands.Choice(name="food", value="food"),
+                                  app_commands.Choice(name="forgiveness", value="forgiveness"),
+                                  app_commands.Choice(name="friendship", value="friendship"),
+                                  app_commands.Choice(name="funny", value="funny"),
+                                  app_commands.Choice(name="graduation", value="graduation"),
+                                  app_commands.Choice(name="happiness", value="happiness"),
+                                  app_commands.Choice(name="health", value="health"),
+                                  app_commands.Choice(name="hope", value="hope"),
+                                  app_commands.Choice(name="humor", value="humor"),
+                                  app_commands.Choice(name="inspirational", value="inspirational"),
+                                  app_commands.Choice(name="intelligence", value="intelligence"),
+                                  app_commands.Choice(name="humor", value="humor"),
+                                  app_commands.Choice(name="knowledge", value="knowledge"),
+                                  app_commands.Choice(name="life", value="life"),
+                                  app_commands.Choice(name="love", value="love"),
+                                  app_commands.Choice(name="success", value="success"),
+                                  ])
+async def quote(interaction: discord.Interaction, categories: app_commands.Choice[str]):
     await interaction.response.defer()
     async with aiohttp.ClientSession() as session:
-        async with session.get(f'https://api.api-ninjas.com/v1/quotes?category={category}', headers={'X-Api-Key' : '26hgo+xM8kjRhaavCUsEgQ==dsGnrqp1zdGqwDYS'}) as response:
+        async with session.get(f'https://api.api-ninjas.com/v1/quotes?category={categories.value}',
+                               headers={'X-Api-Key': '26hgo+xM8kjRhaavCUsEgQ==dsGnrqp1zdGqwDYS'}) as response:
             raw = await response.text()
             quotemap = json.loads(raw)[0]
             quote = quotemap["quote"]
             author = quotemap["author"]
             category = quotemap["category"]
             match category:
-                case "happiness":
-                    category = " ".join(emoji.emojize(":grinning_face:"))
-                case "birthday":
-                    category = " ".join(emoji.emojize(":birthday_cake:"))
                 case "inspirational":
-                    category = " ".join(emoji.emojize(":raised_fist:"))
-                case "death":
-                    category = " ".join(emoji.emojize(":skull:"))
-                case "alone":
-                    category = " ".join(emoji.emojize(":crying_face:"))
+                    category += (emoji.emojize(":raised_fist:"))
                 case "intelligence":
-                    category = " ".join(emoji.emojize(" " + ":nerd_face:"))
-                case "movies":
-                    category = " ".join(emoji.emojize(":clapper_board:"))
+                    category += (emoji.emojize(":nerd_face:"))
                 case "failure":
-                    category = " ".join(emoji.emojize(":pensive_face:"))
+                    category += (emoji.emojize(":pensive_face:"))
                 case "knowledge":
-                    category = " ".join(emoji.emojize(":books:"))
+                    category += (emoji.emojize(":books:"))
+                case "anger":
+                    category += (emoji.emojize(":enraged_face:"))
+                case "health":
+                    category += (emoji.emojize(":hospital:"))
+                case "humor":
+                    category += (emoji.emojize(":face_with_tears_of_joy:"))
+                case "funny":
+                    category += (emoji.emojize(":rolling_on_the_floor_laughing:"))
+                case "art":
+                    category += (emoji.emojize(":artist_palette:"))
                 case "love":
-                    category = " ".join(emoji.emojize(":growing_heart:"))
-            await interaction.followup.send(f"\n**Category**: {category.upper()}\n\n*{quote}*\n***-{author}***")
+                    category += (emoji.emojize(":growing_heart:"))
+                case "family":
+                    category += (emoji.emojize(":family:"))
+                case "fear":
+                    category += (emoji.emojize(":face_screaming_in_fear:"))
+                case "graduation":
+                    category += (emoji.emojize(":graduation_cap:"))
+                case "hope":
+                    category += (emoji.emojize(":pleading_face:"))
+                case "success":
+                    category += (emoji.emojize(":check_mark_button:"))
+                case "change":
+                    category += (emoji.emojize(":exclamation_question_mark:"))
+                case "friendship":
+                    category += (emoji.emojize(":handshake:"))
+                case "forgiveness":
+                    category += (emoji.emojize(":person_bowing:"))
+                case "food":
+                    category += (emoji.emojize(":fork_and_knife:"))
+                case "life":
+                    category += (emoji.emojize(":seedling:"))
+                case "courage":
+                    category += (emoji.emojize(":person_fencing:"))
+                case "experience":
+                    category += (emoji.emojize(":old_man:"))
+
+            await interaction.followup.send(f"**Category**: {category.upper()}\n\n*{quote}*\n***-{author}***")
 
 
 # image/gif based commands
