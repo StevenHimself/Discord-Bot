@@ -1,8 +1,9 @@
 # Author: Steven Montecinos
 
-import discord, aiohttp, json, os, emoji
+import discord, aiohttp, json, os, emoji, wavelink
 from discord import app_commands
 from discord.ext import commands
+from wavelink import Node
 
 # creating json.config and securing token
 if not os.path.exists(os.getcwd() + "/config.json"):
@@ -24,14 +25,37 @@ bot = commands.Bot(command_prefix="!", intents=discord.Intents.all(), applicatio
 @bot.event
 async def on_ready():
     print("Bot online, Beep Boop.")
+    bot.loop.create_task(connect_nodes())  # HTTPS and websocket applications
     try:
         synced = await bot.tree.sync()
-        print(f"Synced {len(synced)} command(s)")
+        print(f"Synced {len(synced)} text/image based command(s)")
     except Exception as e:
         print(e)
 
+@bot.event
+async def on_wavelink_node_ready(node: Node) -> None:
+    print(f"Node: <{node.id}> is ready!")
 
-# text based commands
+
+async def connect_nodes():
+    await bot.wait_until_ready()
+    node: wavelink.Node = wavelink.Node(uri='http://lavalink.clxud.pro:2333', password='youshallnotpass')
+    await wavelink.NodePool.connect(client=bot, nodes=[node])
+
+
+@bot.command()
+async def play(ctx: commands.Context, *, search: wavelink.YouTubeMusicTrack):
+    if not ctx.voice_client:
+        vc: wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
+    elif not ctx.author.voice_client:
+        return await ctx.send("Please join a voice channel before giving me a command.")
+    else:
+        vc: wavelink.Player = ctx.voice_client
+    
+    vc.play(search)
+    
+
+# text based commands=
 @bot.tree.command(name="rayjay", description="It's going to be RayJay time!")
 async def rayjay(interaction: discord.Interaction):
     await interaction.response.send_message(
@@ -75,6 +99,7 @@ async def say(interaction: discord.Interaction, paulie_joke: str):
                                   app_commands.Choice(name="forgiveness", value="forgiveness"),
                                   app_commands.Choice(name="friendship", value="friendship"),
                                   app_commands.Choice(name="funny", value="funny"),
+                                  app_commands.Choice(name="god", value="god"),
                                   app_commands.Choice(name="graduation", value="graduation"),
                                   app_commands.Choice(name="happiness", value="happiness"),
                                   app_commands.Choice(name="health", value="health"),
@@ -82,7 +107,6 @@ async def say(interaction: discord.Interaction, paulie_joke: str):
                                   app_commands.Choice(name="humor", value="humor"),
                                   app_commands.Choice(name="inspirational", value="inspirational"),
                                   app_commands.Choice(name="intelligence", value="intelligence"),
-                                  app_commands.Choice(name="humor", value="humor"),
                                   app_commands.Choice(name="knowledge", value="knowledge"),
                                   app_commands.Choice(name="life", value="life"),
                                   app_commands.Choice(name="love", value="love"),
@@ -181,7 +205,5 @@ async def on_app_command_error(interaction: discord.Interaction, error: app_comm
     else:
         raise error
 
-
-# TODO:music based commands
 
 bot.run(token)
