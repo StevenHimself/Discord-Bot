@@ -1,9 +1,9 @@
 # Author: Steven Montecinos
-
 import discord, aiohttp, json, os, emoji, wavelink
 from discord import app_commands
 from discord.ext import commands
-from wavelink import Node
+from typing import Any
+from wavelink import node
 
 # creating json.config and securing token
 if not os.path.exists(os.getcwd() + "/config.json"):
@@ -26,36 +26,57 @@ bot = commands.Bot(command_prefix="!", intents=discord.Intents.all(), applicatio
 async def on_ready():
     print("Bot online, Beep Boop.")
     bot.loop.create_task(connect_nodes())  # HTTPS and websocket applications
-    try:
-        synced = await bot.tree.sync()
-        print(f"Synced {len(synced)} text/image based command(s)")
-    except Exception as e:
-        print(e)
+
 
 @bot.event
-async def on_wavelink_node_ready(node: Node) -> None:
-    print(f"Node: <{node.id}> is ready!")
+async def on_wavelink_node_ready(node: wavelink.Node) -> None:
+    print(f"Node <{node.id}> is ready")
 
 
 async def connect_nodes():
     await bot.wait_until_ready()
-    node: wavelink.Node = wavelink.Node(uri='http://lavalink.clxud.pro:2333', password='youshallnotpass')
+    node: wavelink.Node = wavelink.Node(uri='http://lavalink.clxud.dev:2333', password='youshallnotpass')
     await wavelink.NodePool.connect(client=bot, nodes=[node])
 
 
+class Player(wavelink.Player):
+    def __init__(self, dj: discord.Member, *args: Any, **kwargs: Any):
+        super().__init__()
+        self.dj = dj
+        self.queue = wavelink.Queue
+
+
+# music based commands
 @bot.command()
-async def play(ctx: commands.Context, *, search: wavelink.YouTubeMusicTrack):
+async def play(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
     if not ctx.voice_client:
         vc: wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
-    elif not ctx.author.voice_client:
-        return await ctx.send("Please join a voice channel before giving me a command.")
     else:
         vc: wavelink.Player = ctx.voice_client
-    
-    vc.play(search)
-    
 
-# text based commands=
+    await vc.play(search)
+
+
+@bot.command()
+async def connect(ctx: commands.Context, *, channel: discord.VoiceChannel | None = None):
+    try:
+        channel = channel or ctx.author.voice.channel
+    except AttributeError:
+        return await ctx.send("No voice channel to connect to. Please either provide one or join one.")
+
+    vc: wavelink.Player = await channel.connect(cls=wavelink.Player)
+    return vc
+
+@bot.command()
+async def disconnect(ctx : commands.Context, *, channel: discord.VoiceChannel | None = None):
+    vc = ctx.voice_client
+    if vc:
+        await vc.disconnect()
+    else:
+        await ctx.send("I am not connected to voice channel!")
+
+
+# text based commands
 @bot.tree.command(name="rayjay", description="It's going to be RayJay time!")
 async def rayjay(interaction: discord.Interaction):
     await interaction.response.send_message(
@@ -80,9 +101,9 @@ async def say(interaction: discord.Interaction, thing_to_say: str):
 
 
 @bot.tree.command(name="pauliejoke", description="Repeats your joke with a Sopranos twist!")
-@app_commands.describe(paulie_joke="user input")
-async def say(interaction: discord.Interaction, paulie_joke: str):
-    await interaction.response.send_message(f"Ay Ton' you hear what I said? I said {paulie_joke} HEH HEH")
+@app_commands.describe(your_joke="user input")
+async def say(interaction: discord.Interaction, your_joke: str):
+    await interaction.response.send_message(f"Ay Ton' you hear what I said? I said {your_joke} HEH HEH")
 
 
 @bot.tree.command(name="quote", description="Generates a random quote from multiple categories!")
@@ -112,7 +133,7 @@ async def say(interaction: discord.Interaction, paulie_joke: str):
                                   app_commands.Choice(name="love", value="love"),
                                   app_commands.Choice(name="success", value="success"),
                                   ])
-async def quote(interaction: discord.Interaction, categories: app_commands.Choice[str]):
+async def random_quote(interaction: discord.Interaction, categories: app_commands.Choice[str]):
     await interaction.response.defer()
     async with aiohttp.ClientSession() as session:
         async with session.get(f'https://api.api-ninjas.com/v1/quotes?category={categories.value}',
@@ -174,7 +195,7 @@ async def quote(interaction: discord.Interaction, categories: app_commands.Choic
 # image/gif based commands
 @bot.tree.command(name="cat", description="Generates a random cat image/gif")
 @app_commands.checks.cooldown(1, 5, key=lambda i: (i.user.id))
-async def catpic(interaction: discord.Interaction):
+async def cat_pic(interaction: discord.Interaction):
     await interaction.response.defer()
     async with aiohttp.ClientSession() as session:
         async with session.get('https://api.thecatapi.com/v1/images/search') as response:
@@ -186,8 +207,8 @@ async def catpic(interaction: discord.Interaction):
 
 
 @bot.tree.command(name="dog", description="Generates a random dog image/gif")
-@app_commands.checks.cooldown(1, 5, key=lambda i: (i.user.id))
-async def dogpic(interaction: discord.Interaction):
+@app_commands.checks.cooldown(1, 5, key=lambda i: i.user.id)
+async def dog_pic(interaction: discord.Interaction):
     await interaction.response.defer()
     async with aiohttp.ClientSession() as session:
         async with session.get('https://dog.ceo/api/breeds/image/random') as response:
