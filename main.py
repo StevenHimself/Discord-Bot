@@ -26,7 +26,6 @@ class Player(wavelink.Player):
         self.queue = wavelink.Queue()
 
 
-
 # startup
 @bot.event
 async def on_ready():
@@ -37,13 +36,6 @@ async def on_ready():
 @bot.event
 async def on_wavelink_node_ready(node: wavelink.Node) -> None:
     print(f"Node <{node.id}> is ready")
-
-
-@bot.event
-async def on_wavelink_track_end(player: Player, next_track: wavelink.YouTubeTrack, reason):
-    if not player.queue.is_empty:
-        next_track = player.queue.get()
-        await player.play(next_track)
 
 
 async def connect_nodes():
@@ -59,25 +51,28 @@ async def play(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
     if not vc:
         player = Player()
         vc: Player = await ctx.author.voice.channel.connect(cls=player)
+        vc.autoplay = True
 
-    vc.autoplay = True
     if vc.is_playing():
         vc.queue.put(search)
 
-        await ctx.send(embed=discord.Embed(title=search.title,
-                                           color=discord.Colour.teal(),
-                                           url=search.uri,
-                                           description=f"{ctx.author} queued \"{search.title}\" in {vc.channel}"
-                                           ))
+        embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
+                              description=f"Queued \"{search.title}\"")
+
+        embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
+
+        await ctx.send(embed=embed)
 
     else:
+
         await vc.play(search)
 
-        await ctx.send(embed=discord.Embed(title=search.title,
-                                           color=discord.Colour.teal(),
-                                           url=search.uri,
-                                           description=f"{ctx.author} played \"{search.title}\" in {vc.channel}"
-                                           ))
+        embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
+                              description=f"Playing \"{search.title}\"")
+
+        embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
+
+        await ctx.send(embed=embed)
 
 
 @bot.command()
