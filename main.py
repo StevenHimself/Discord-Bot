@@ -2,8 +2,6 @@
 import discord, aiohttp, json, os, emoji, wavelink
 from discord import app_commands
 from discord.ext import commands
-from typing import Any
-from wavelink import node
 
 # creating json.config and securing token
 if not os.path.exists(os.getcwd() + "/config.json"):
@@ -21,6 +19,14 @@ prefix = configData["PREFIX"]
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all(), application_id=1116698756046389300)
 
 
+# Player class
+class Player(wavelink.Player):
+    def __init__(self):
+        super().__init__()
+        self.queue = wavelink.Queue()
+
+
+
 # startup
 @bot.event
 async def on_ready():
@@ -33,63 +39,97 @@ async def on_wavelink_node_ready(node: wavelink.Node) -> None:
     print(f"Node <{node.id}> is ready")
 
 
+@bot.event
+async def on_wavelink_track_end(player: Player, next_track: wavelink.YouTubeTrack, reason):
+    if not player.queue.is_empty:
+        next_track = player.queue.get()
+        await player.play(next_track)
+
+
 async def connect_nodes():
     await bot.wait_until_ready()
     node: wavelink.Node = wavelink.Node(uri='http://lavalink.clxud.dev:2333', password='youshallnotpass')
     await wavelink.NodePool.connect(client=bot, nodes=[node])
 
 
-class Player(wavelink.Player):
-    def __init__(self, dj: discord.Member, *args: Any, **kwargs: Any):
-        super().__init__()
-        self.dj = dj
-        self.queue = wavelink.Queue
-
-
 # music based commands
 @bot.command()
 async def play(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
-    if not ctx.voice_client:
-        vc: wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
-    else:
-        vc: wavelink.Player = ctx.voice_client
+    vc: wavelink.Player = ctx.voice_client  # This represents a discord connection
+    if not vc:
+        player = Player()
+        vc: Player = await ctx.author.voice.channel.connect(cls=player)
 
-    await vc.play(search)
+    vc.autoplay = True
+    if vc.is_playing():
+        vc.queue.put(search)
+
+        await ctx.send(embed=discord.Embed(title=search.title,
+                                           color=discord.Colour.teal(),
+                                           url=search.uri,
+                                           description=f"{ctx.author} queued \"{search.title}\" in {vc.channel}"
+                                           ))
+
+    else:
+        await vc.play(search)
+
+        await ctx.send(embed=discord.Embed(title=search.title,
+                                           color=discord.Colour.teal(),
+                                           url=search.uri,
+                                           description=f"{ctx.author} played \"{search.title}\" in {vc.channel}"
+                                           ))
+
+
+@bot.command()
+async def skip(ctx: commands.Context):
+    vc: wavelink.Player = ctx.voice_client
+    if vc:
+        if not vc.is_playing():
+            return await ctx.send("I am not playing anything to skip.")
+        if vc.queue.is_empty:
+            return await vc.stop()
+
+        await vc.seek(10800000)
+
+        if vc.is_paused():
+            await vc.resume()
+
+    elif not vc:
+        await ctx.send("I am not connected to a voice channel")
 
 
 @bot.command()
 async def connect(ctx: commands.Context, *, channel: discord.VoiceChannel | None = None):
+    vc: wavelink.Player = ctx.voice_client
     try:
         channel = channel or ctx.author.voice.channel
     except AttributeError:
         return await ctx.send("No voice channel to connect to. Please either provide one or join one.")
 
-    vc: wavelink.Player = await channel.connect(cls=wavelink.Player)
+    if not vc:
+        await channel.connect(cls=Player())
+    elif vc:
+        await ctx.send("I am already connected to a channel.")
     return vc
 
+
 @bot.command()
-async def disconnect(ctx : commands.Context, *, channel: discord.VoiceChannel | None = None):
-    vc = ctx.voice_client
+async def disconnect(ctx: commands.Context, *, channel: discord.VoiceChannel | None = None):
+    vc: wavelink.Player = ctx.voice_client
     if vc:
         await vc.disconnect()
-    else:
+    elif not vc:
         await ctx.send("I am not connected to voice channel!")
 
 
 # text based commands
-@bot.tree.command(name="rayjay", description="It's going to be RayJay time!")
+@bot.tree.command(name="rayjay", description="RayJay time!")
 async def rayjay(interaction: discord.Interaction):
     await interaction.response.send_message(
         f"Hey there little {interaction.user.mention}! it's Ray Jay time! RAYJAY RAYJAY RAYJAY")
 
 
-@bot.tree.command(name="battlecry", description="Join Dustin into battle!")
-async def battlecry(interaction: discord.Interaction):
-    await interaction.response.send_message(
-        f"BROTHERS OF THE NORTHERN REGION JOIN ME INTO BATTLE TO BREAK FATHER CALEB'S LEGS!!!  ...both of them")
-
-
-@bot.tree.command(name="littlegirl", description="Steph's catchphrase")
+@bot.tree.command(name="steph", description="Steph's catchphrase")
 async def littlegirl(interaction: discord.Interaction):
     await interaction.response.send_message(f"{interaction.user.mention} OH MY GOODNESS!")
 
@@ -100,7 +140,7 @@ async def say(interaction: discord.Interaction, thing_to_say: str):
     await interaction.response.send_message(f"{interaction.user.name} said: {thing_to_say}")
 
 
-@bot.tree.command(name="pauliejoke", description="Repeats your joke with a Sopranos twist!")
+@bot.tree.command(name="pauliejoke", description="Repeats your joke with a Sopranos twist")
 @app_commands.describe(your_joke="user input")
 async def say(interaction: discord.Interaction, your_joke: str):
     await interaction.response.send_message(f"Ay Ton' you hear what I said? I said {your_joke} HEH HEH")
@@ -219,12 +259,21 @@ async def dog_pic(interaction: discord.Interaction):
             await interaction.followup.send(embed=embed)
 
 
+# error handling
 @bot.tree.error
 async def on_app_command_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
     if isinstance(error, app_commands.CommandOnCooldown):
         await interaction.response.send_message(error, ephemeral=True)
     else:
         raise error
+
+
+@play.error
+async def play_error(ctx: commands.Context, error):
+    if isinstance(error, commands.BadArgument):
+        await ctx.send("Could not find track.")
+    else:
+        await ctx.send("Please join a voice channel.")
 
 
 bot.run(token)
