@@ -53,19 +53,20 @@ async def play(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
         vc: Player = await ctx.author.voice.channel.connect(cls=player)
         vc.autoplay = True
 
-    if vc.is_playing():
-        vc.queue.put(search)
-
-        embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
-                              description=f"Queued \"{search.title}\"")
-        embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
-
-        await ctx.send(embed=embed)
-    else:
+    if vc.queue.is_empty and not vc.is_playing():
         await vc.play(search)
 
         embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
                               description=f"Playing \"{search.title}\"")
+        embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
+
+        await ctx.send(embed=embed)
+
+    else:
+        vc.queue.put(search)
+
+        embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
+                              description=f"Queued \"{search.title}\"")
         embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
 
         await ctx.send(embed=embed)
