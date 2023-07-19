@@ -59,7 +59,6 @@ async def play(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
         embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
                               description=f"Queued \"{search.title}\"")
         embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
-
         await ctx.send(embed=embed)
     else:
         await vc.play(search)
