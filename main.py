@@ -58,18 +58,14 @@ async def play(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
 
         embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
                               description=f"Queued \"{search.title}\"")
-
         embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
 
         await ctx.send(embed=embed)
-
     else:
-
         await vc.play(search)
 
         embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
                               description=f"Playing \"{search.title}\"")
-
         embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
 
         await ctx.send(embed=embed)
@@ -90,7 +86,33 @@ async def skip(ctx: commands.Context):
             await vc.resume()
 
     elif not vc:
-        await ctx.send("I am not connected to a voice channel")
+        await ctx.send("I am not connected to a voice channel.")
+
+
+@bot.command()
+async def pause(ctx: commands.Context):
+    vc: wavelink.Player = ctx.voice_client
+    if vc:
+        if vc.is_paused():
+            return await ctx.send("I am already paused.")
+        else:
+            return await vc.pause()
+
+    elif not vc:
+        await ctx.send("I am not connected to a voice channel.")
+
+
+@bot.command()
+async def resume(ctx: commands.Context):
+    vc: wavelink.Player = ctx.voice_client
+    if vc:
+        if not vc.is_paused():
+            return await ctx.send("I'm already playing music.")
+        else:
+            return await vc.resume()
+
+    elif not vc:
+        await ctx.send("I am not connected to a voice channel.")
 
 
 @bot.command()
