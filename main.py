@@ -3,6 +3,7 @@ import discord, aiohttp, json, os, emoji, wavelink
 from discord import app_commands
 from discord.ext import commands
 
+
 # creating json.config and securing token
 if not os.path.exists(os.getcwd() + "/config.json"):
     configTemplate = {"TOKEN": "", "PREFIX": "!"}
@@ -36,7 +37,15 @@ async def on_ready():
 @bot.event
 async def on_wavelink_node_ready(node: wavelink.Node) -> None:
     print(f"Node <{node.id}> is ready")
-    wavelink.Player.autoplay = True  # handles player queue
+    wavelink.Player.autoplay = True
+
+
+@bot.event
+async def on_wavelink_track_end(player: CustomPlayer, track: wavelink.YouTubeTrack, reason):
+    if not player.queue.is_empty:
+        next_track = player.queue.get()
+        await player.play(next_track)
+
 
 # connects to lavalink host
 async def connect_nodes():
@@ -45,12 +54,12 @@ async def connect_nodes():
     await wavelink.NodePool.connect(client=bot, nodes=[node])
 
 
-# music based commands
+# MUSIC BASED COMMANDS
 
 # command that plays from YouTube
 @bot.command()
 async def ytplay(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
-    vc = ctx.guild.voice_client #represents a discord connection
+    vc = ctx.guild.voice_client  # represents a discord connection
 
     if not vc:
         custom_player = CustomPlayer()
@@ -67,7 +76,7 @@ async def ytplay(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
 
     else:
 
-        vc.queue.put(search)
+        vc.queue.put(item=search)
 
         embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
                               description=f"Queued \"{search.title}\"")
@@ -95,7 +104,7 @@ async def scplay(ctx: commands.Context, *, search: wavelink.SoundCloudTrack):
         await ctx.send(embed=embed)
     else:
 
-        vc.queue.put(search)
+        vc.queue.put(item=search)
 
         embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
                               description=f"Queued \"{search.title}\"")
@@ -115,6 +124,7 @@ async def skip(ctx: commands.Context):
             return await vc.stop()
     else:
         await ctx.send("I am not connected to a voice channel.")
+
 
 # pause command
 @bot.command()
@@ -180,7 +190,7 @@ async def disconnect(ctx: commands.Context, *, channel: discord.VoiceChannel | N
         await ctx.send("I am not connected to voice channel!")
 
 
-# text based commands
+# TEXT BASED COMMANDS
 @bot.tree.command(name="rayjay", description="RayJay time!")
 async def rayjay(interaction: discord.Interaction):
     await interaction.response.send_message(
@@ -271,7 +281,7 @@ async def random_quote(interaction: discord.Interaction, categories: app_command
                     category += (emoji.emojize(":graduation_cap:"))
                 case "hope":
                     category += (emoji.emojize(":pleading_face:"))
-                case "succ[ess":
+                case "success":
                     category += (emoji.emojize(":check_mark_button:"))
                 case "change":
                     category += (emoji.emojize(":exclamation_question_mark:"))
@@ -291,7 +301,7 @@ async def random_quote(interaction: discord.Interaction, categories: app_command
             await interaction.followup.send(f"**Category**: {category.upper()}\n\n*{quote}*\n***-{author}***")
 
 
-# image/gif based commands
+# IMAGE/GIF BASED COMMANDS
 
 # Generates random cat images/gifs from API
 @bot.tree.command(name="cat", description="Generates a random cat image/gif")
