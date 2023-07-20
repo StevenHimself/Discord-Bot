@@ -50,8 +50,7 @@ async def play(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
     vc: wavelink.Player = ctx.voice_client  # This represents a discord connection
     if not vc:
         player = Player()
-        vc: Player = await ctx.author.voice.channel.connect(cls=player)
-        vc.autoplay = True
+        vc: wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
 
     if vc.queue.is_empty and not vc.is_playing():
         await vc.play(search)
@@ -63,6 +62,7 @@ async def play(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
         await ctx.send(embed=embed)
 
     else:
+        vc.autoplay = True
         vc.queue.put(search)
 
         embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
@@ -81,7 +81,7 @@ async def skip(ctx: commands.Context):
         if vc.queue.is_empty:
             return await vc.stop()
 
-        await vc.seek(10800000)
+        await vc.seek(999999999)
 
         if vc.is_paused():
             await vc.resume()
@@ -111,6 +111,16 @@ async def resume(ctx: commands.Context):
             return await ctx.send("I'm already playing music.")
         else:
             return await vc.resume()
+
+    elif not vc:
+        await ctx.send("I am not connected to a voice channel.")
+
+
+@bot.command()
+async def queue(ctx: commands.Context):
+    vc: wavelink.Player = ctx.voice_client
+    if vc:
+        await ctx.send(f"{vc.queue}")
 
     elif not vc:
         await ctx.send("I am not connected to a voice channel.")
@@ -197,13 +207,13 @@ async def random_quote(interaction: discord.Interaction, categories: app_command
         async with session.get(f'https://api.api-ninjas.com/v1/quotes?category={categories.value}',
                                headers={'X-Api-Key': '26hgo+xM8kjRhaavCUsEgQ==dsGnrqp1zdGqwDYS'}) as response:
             raw = await response.text()
-            quotemap = json.loads(raw)[0]
-            quote = quotemap["quote"]
-            author = quotemap["author"]
-            category = quotemap["category"]
+            quote_map = json.loads(raw)[0]
+            quote = quote_map["quote"]
+            author = quote_map["author"]
+            category = quote_map["category"]
             match category:
                 case "inspirational":
-                    category += (emoji.emojize(":raised_fist:"))
+                    category += (emoji.emojize(":ra[ised_fist:"))
                 case "intelligence":
                     category += (emoji.emojize(":nerd_face:"))
                 case "failure":
@@ -230,7 +240,7 @@ async def random_quote(interaction: discord.Interaction, categories: app_command
                     category += (emoji.emojize(":graduation_cap:"))
                 case "hope":
                     category += (emoji.emojize(":pleading_face:"))
-                case "success":
+                case "succ[ess":
                     category += (emoji.emojize(":check_mark_button:"))
                 case "change":
                     category += (emoji.emojize(":exclamation_question_mark:"))
