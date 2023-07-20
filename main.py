@@ -26,19 +26,19 @@ class CustomPlayer(wavelink.Player):
         self.queue = wavelink.Queue()
 
 
-# startup
+# bot goes online
 @bot.event
 async def on_ready():
     print("Bot online, Beep Boop.")
-    bot.loop.create_task(connect_nodes())  # HTTPS and websocket applications
+    bot.loop.create_task(connect_nodes())  # continuous attempt to connect to a node
 
 
 @bot.event
 async def on_wavelink_node_ready(node: wavelink.Node) -> None:
     print(f"Node <{node.id}> is ready")
-    wavelink.Player.autoplay = True
+    wavelink.Player.autoplay = True  # handles player queue
 
-
+# connects to lavalink host
 async def connect_nodes():
     await bot.wait_until_ready()
     node: wavelink.Node = wavelink.Node(uri='http://lavalink.clxud.dev:2333', password='youshallnotpass')
@@ -46,9 +46,11 @@ async def connect_nodes():
 
 
 # music based commands
+
+# command that plays from YouTube
 @bot.command()
 async def ytplay(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
-    vc = ctx.guild.voice_client
+    vc = ctx.guild.voice_client #represents a discord connection
 
     if not vc:
         custom_player = CustomPlayer()
@@ -74,6 +76,7 @@ async def ytplay(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
         await ctx.send(embed=embed)
 
 
+# command that plays from SoundCloud
 @bot.command()
 async def scplay(ctx: commands.Context, *, search: wavelink.SoundCloudTrack):
     vc = ctx.guild.voice_client
@@ -101,6 +104,7 @@ async def scplay(ctx: commands.Context, *, search: wavelink.SoundCloudTrack):
         await ctx.send(embed=embed)
 
 
+# skip command
 @bot.command()
 async def skip(ctx: commands.Context):
     vc = ctx.guild.voice_client
@@ -112,7 +116,7 @@ async def skip(ctx: commands.Context):
     else:
         await ctx.send("I am not connected to a voice channel.")
 
-
+# pause command
 @bot.command()
 async def pause(ctx: commands.Context):
     vc = ctx.guild.voice_client
@@ -126,6 +130,7 @@ async def pause(ctx: commands.Context):
         await ctx.send("I am not connected to a voice channel.")
 
 
+# resume command
 @bot.command()
 async def resume(ctx: commands.Context):
     vc = ctx.guild.voice_client
@@ -139,6 +144,7 @@ async def resume(ctx: commands.Context):
         await ctx.send("I am not connected to a voice channel.")
 
 
+# displays current queue
 @bot.command()
 async def queue(ctx: commands.Context):
     vc = ctx.guild.voice_client
@@ -149,6 +155,7 @@ async def queue(ctx: commands.Context):
         await ctx.send("I am not connected to a voice channel.")
 
 
+# connect to channel command
 @bot.command()
 async def connect(ctx: commands.Context, *, channel: discord.VoiceChannel | None = None):
     vc = ctx.guild.voice_client
@@ -163,6 +170,7 @@ async def connect(ctx: commands.Context, *, channel: discord.VoiceChannel | None
         await ctx.send("I am already connected to a channel.")
 
 
+# disconnect from channel command
 @bot.command()
 async def disconnect(ctx: commands.Context, *, channel: discord.VoiceChannel | None = None):
     vc = ctx.guild.voice_client
@@ -196,6 +204,7 @@ async def say(interaction: discord.Interaction, your_joke: str):
     await interaction.response.send_message(f"Ay Ton' you hear what I said? I said {your_joke} HEH HEH")
 
 
+# Generates random quote from a set of categories
 @bot.tree.command(name="quote", description="Generates a random quote from multiple categories!")
 @app_commands.checks.cooldown(1, 5, key=lambda i: i.user.id)
 @app_commands.choices(categories=[app_commands.Choice(name="anger", value="anger"),
@@ -235,7 +244,7 @@ async def random_quote(interaction: discord.Interaction, categories: app_command
             category = quote_map["category"]
             match category:
                 case "inspirational":
-                    category += (emoji.emojize(":ra[ised_fist:"))
+                    category += (emoji.emojize(":raised_fist:"))
                 case "intelligence":
                     category += (emoji.emojize(":nerd_face:"))
                 case "failure":
@@ -283,6 +292,8 @@ async def random_quote(interaction: discord.Interaction, categories: app_command
 
 
 # image/gif based commands
+
+# Generates random cat images/gifs from API
 @bot.tree.command(name="cat", description="Generates a random cat image/gif")
 @app_commands.checks.cooldown(1, 5, key=lambda i: (i.user.id))
 async def cat_pic(interaction: discord.Interaction):
@@ -296,6 +307,7 @@ async def cat_pic(interaction: discord.Interaction):
             await interaction.followup.send(embed=embed)
 
 
+# Generates random dog images/gifs from API
 @bot.tree.command(name="dog", description="Generates a random dog image/gif")
 @app_commands.checks.cooldown(1, 5, key=lambda i: i.user.id)
 async def dog_pic(interaction: discord.Interaction):
