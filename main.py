@@ -76,7 +76,7 @@ async def ytplay(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
 
         await ctx.send(embed=embed)
 
-    elif vc.is_playing() and not vc.queue.is_empty:
+    else:
         vc.queue.put(item=search)
 
         embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
@@ -104,7 +104,7 @@ async def scplay(ctx: commands.Context, *, search: wavelink.SoundCloudTrack):
 
         await ctx.send(embed=embed)
 
-    elif vc.is_playing() and not vc.queue.is_empty:
+    else:
         vc.queue.put(item=search)
 
         embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
