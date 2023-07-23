@@ -68,20 +68,26 @@ async def ytplay(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
         vc: CustomPlayer = await ctx.author.voice.channel.connect(cls=custom_player)
 
     if not vc.is_playing() and vc.queue.is_empty:
-        await vc.play(search)
+        await vc.play(search, populate=True)
 
-        embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
+        embed = discord.Embed(title=search.title, color=discord.Colour.red(), url=search.uri,
                               description=f"Playing \"{search.title}\"")
         embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
+        embed.set_thumbnail(url=search.fetch_thumbnail())
+        embed.set_field_at(0, name="Artist", value=search.author)
+        embed.set_field_at(1, name="Track length", value=search.duration)
 
         await ctx.send(embed=embed)
 
     else:
         vc.queue.put(item=search)
 
-        embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
+        embed = discord.Embed(title=search.title, color=discord.Colour.red(), url=search.uri,
                               description=f"Queued \"{search.title}\"")
         embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
+        embed.set_thumbnail(url=search.fetch_thumbnail())
+        embed.set_field_at(0, name="Artist", value=search.author, inline=True)
+        embed.set_field_at(1, name="Track length", value=search.duration, inline=True)
 
         await ctx.send(embed=embed)
 
@@ -96,20 +102,24 @@ async def scplay(ctx: commands.Context, *, search: wavelink.SoundCloudTrack):
         vc: CustomPlayer = await ctx.author.voice.channel.connect(cls=custom_player)
 
     if not vc.is_playing() and vc.queue.is_empty:
-        await vc.play(search)
+        await vc.play(search, populate=True)
 
-        embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
+        embed = discord.Embed(title=search.title, color=discord.Colour.orange(), url=search.uri,
                               description=f"Playing \"{search.title}\"")
         embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
+        embed.set_field_at(0, name="Artist", value=search.author, inline=True)
+        embed.set_field_at(1, name="Track length", value=search.duration, inline=True)
 
         await ctx.send(embed=embed)
 
     else:
         vc.queue.put(item=search)
 
-        embed = discord.Embed(title=search.title, color=discord.Colour.teal(), url=search.uri,
+        embed = discord.Embed(title=search.title, color=discord.Colour.orange(), url=search.uri,
                               description=f"Queued \"{search.title}\"")
         embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
+        embed.set_field_at(0, name="Artist", value=search.author)
+        embed.set_field_at(1, name="Track length", value=search.duration)
 
         await ctx.send(embed=embed)
 
