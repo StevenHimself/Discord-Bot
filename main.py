@@ -71,7 +71,7 @@ async def ytplay(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
         await vc.play(search)
 
         embed = discord.Embed(title=search.title, color=discord.Colour.red(), url=search.uri,
-                              description=f"Playing \"{search.title}\"")
+                              description="Playing from YouTube! ▶️")
         embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
 
         await ctx.send(embed=embed)
@@ -80,7 +80,7 @@ async def ytplay(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
         vc.queue.put(item=search)
 
         embed = discord.Embed(title=search.title, color=discord.Colour.red(), url=search.uri,
-                              description=f"Queued \"{search.title}\"")
+                              description="Queued from YouTube ▶️")
         embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
 
         await ctx.send(embed=embed)
@@ -96,10 +96,10 @@ async def scplay(ctx: commands.Context, *, search: wavelink.SoundCloudTrack):
         vc: CustomPlayer = await ctx.author.voice.channel.connect(cls=custom_player)
 
     if not vc.is_playing() and vc.queue.is_empty:
-        await vc.play(search, populate=True)
+        await vc.play(search)
 
         embed = discord.Embed(title=search.title, color=discord.Colour.orange(), url=search.uri,
-                              description=f"Playing \"{search.title}\"")
+                              description="Playing from SoundCloud! ☁️")
         embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
 
         await ctx.send(embed=embed)
@@ -108,7 +108,7 @@ async def scplay(ctx: commands.Context, *, search: wavelink.SoundCloudTrack):
         vc.queue.put(item=search)
 
         embed = discord.Embed(title=search.title, color=discord.Colour.orange(), url=search.uri,
-                              description=f"Queued \"{search.title}\"")
+                              description="Queued from SoundCloud! ☁️")
         embed.set_footer(text=f"Request made by {ctx.author}", icon_url=ctx.author.display_avatar)
 
         await ctx.send(embed=embed)
@@ -255,49 +255,49 @@ async def random_quote(interaction: discord.Interaction, categories: app_command
             category = quote_map["category"]
             match category:
                 case "inspirational":
-                    category += (emoji.emojize(":raised_fist:"))
+                    category += " ✊"
                 case "intelligence":
-                    category += (emoji.emojize(":nerd_face:"))
+                    category += " 🤓"
                 case "failure":
-                    category += (emoji.emojize(":pensive_face:"))
+                    category += " 😔"
                 case "knowledge":
-                    category += (emoji.emojize(":books:"))
+                    category += " 📚"
                 case "anger":
-                    category += (emoji.emojize(":enraged_face:"))
+                    category += " 😠"
                 case "health":
-                    category += (emoji.emojize(":hospital:"))
+                    category += " 🏥"
                 case "humor":
-                    category += (emoji.emojize(":face_with_tears_of_joy:"))
+                    category += " 😂"
                 case "funny":
-                    category += (emoji.emojize(":rolling_on_the_floor_laughing:"))
+                    category += " 🤣"
                 case "art":
-                    category += (emoji.emojize(":artist_palette:"))
+                    category += " 🎨"
                 case "love":
-                    category += (emoji.emojize(":growing_heart:"))
+                    category += " 💗"
                 case "family":
-                    category += (emoji.emojize(":family:"))
+                    category += " 👪"
                 case "fear":
-                    category += (emoji.emojize(":face_screaming_in_fear:"))
+                    category += " 😱"
                 case "graduation":
-                    category += (emoji.emojize(":graduation_cap:"))
+                    category += " 🎓"
                 case "hope":
-                    category += (emoji.emojize(":pleading_face:"))
+                    category += " 🥺"
                 case "success":
-                    category += (emoji.emojize(":check_mark_button:"))
+                    category += " ✔️"
                 case "change":
-                    category += (emoji.emojize(":exclamation_question_mark:"))
+                    category += " ⁉️"
                 case "friendship":
-                    category += (emoji.emojize(":handshake:"))
+                    category += " 🤝"
                 case "forgiveness":
-                    category += (emoji.emojize(":person_bowing:"))
+                    category += " 🙇"
                 case "food":
-                    category += (emoji.emojize(":fork_and_knife:"))
+                    category += " 🍴"
                 case "life":
-                    category += (emoji.emojize(":seedling:"))
+                    category += " 🌱"
                 case "courage":
-                    category += (emoji.emojize(":person_fencing:"))
+                    category += " 🤺"
                 case "experience":
-                    category += (emoji.emojize(":old_man:"))
+                    category += " 👴"
 
             await interaction.followup.send(f"**Category**: {category.upper()}\n\n*{quote}*\n***-{author}***")
 
@@ -313,7 +313,7 @@ async def cat_pic(interaction: discord.Interaction):
         async with session.get('https://api.thecatapi.com/v1/images/search') as response:
             raw = await response.text()
             cat = json.loads(raw)[0]
-            embed = discord.Embed(title=emoji.emojize("meow! :grinning_cat:"), color=discord.Colour.purple())
+            embed = discord.Embed(title="meow! 😺", color=discord.Colour.purple())
             embed.set_image(url=cat['url'])
             await interaction.followup.send(embed=embed)
 
@@ -327,7 +327,7 @@ async def dog_pic(interaction: discord.Interaction):
         async with session.get('https://dog.ceo/api/breeds/image/random') as response:
             raw = await response.text()
             dog = json.loads(raw)
-            embed = discord.Embed(title=emoji.emojize("woof! :dog_face:"), color=discord.Colour.green())
+            embed = discord.Embed(title="woof! 🐶", color=discord.Colour.green())
             embed.set_image(url=dog['message'])
             await interaction.followup.send(embed=embed)
 
