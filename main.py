@@ -1,5 +1,5 @@
 # Author: Steven Montecinos
-import discord, aiohttp, json, os, emoji, wavelink
+import discord, aiohttp, json, os, emoji, wavelink, time
 from discord import app_commands
 from discord.ext import commands
 
@@ -39,6 +39,7 @@ async def on_wavelink_node_ready(node: wavelink.Node) -> None:
     print(f"Node <{node.id}> is ready")
     wavelink.Player.autoplay = True
 
+
 # @bot.event
 # async def on_wavelink_track_end(custom_player: CustomPlayer, track: wavelink.YouTubeTrack, reason):
 #     if not custom_player.queue.is_empty:
@@ -67,7 +68,7 @@ async def ytplay(ctx: commands.Context, *, search: wavelink.YouTubeTrack):
         vc: CustomPlayer = await ctx.author.voice.channel.connect(cls=custom_player, self_deaf=True)
 
     if not vc.is_playing() and vc.queue.is_empty:
-        await vc.play(search, populate=True)
+        await vc.play(search)
 
         embed = discord.Embed(title=search.title, color=discord.Colour.red(), url=search.uri,
                               description=f"Playing \"{search.title}\"")
