@@ -46,13 +46,13 @@ async def on_wavelink_node_ready(node: wavelink.Node) -> None:
 #         next_track = custom_player.queue.get()
 #         await custom_player.play(next_track)
 #     else:
-#         print("Finished playing")
+#         print("Finished playing")0
 
 
 # connects to lavalink host
 async def connect_nodes():
     await bot.wait_until_ready()
-    node: wavelink.Node = wavelink.Node(uri='http://lava1.horizxon.studio:80', password='horizxon.studio')
+    node: wavelink.Node = wavelink.Node(uri='http://panel.sillydev.co.uk:6039', password='bestfreehosting')
     await wavelink.NodePool.connect(client=bot, nodes=[node])
 
 
@@ -346,7 +346,7 @@ async def play_error(ctx: commands.Context, error):
     if isinstance(error, commands.BadArgument):
         await ctx.send("Could not find track.")
     else:
-        await ctx.send("Please join a voice channel.")
+        await ctx.send("***TIMEOUT***: try again.")
 
 
 @scplay.error
@@ -354,7 +354,7 @@ async def play_error(ctx: commands.Context, error):
     if isinstance(error, commands.BadArgument):
         await ctx.send("Could not find track.")
     else:
-        await ctx.send("TIMEOUT: Wait a couple seconds before sending another command.")
+        await ctx.send("***TIMEOUT***: try again.")
 
 
 bot.run(token)
