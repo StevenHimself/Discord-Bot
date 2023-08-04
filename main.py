@@ -52,7 +52,7 @@ async def on_wavelink_node_ready(node: wavelink.Node) -> None:
 # connects to lavalink host
 async def connect_nodes():
     await bot.wait_until_ready()
-    node: wavelink.Node = wavelink.Node(uri='http://panel.sillydev.co.uk:6039', password='bestfreehosting')
+    node: wavelink.Node = wavelink.Node(uri='us.lavalink.alexanderof.xyz:2333', password='lavalink')
     await wavelink.NodePool.connect(client=bot, nodes=[node])
 
 
