@@ -50,6 +50,18 @@ async def main():
         print(f"Node <{node.id}> is ready")
         wavelink.Player.autoplay = True
 
+    # @bot.event
+    # async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
+    #     voice_state = discord.VoiceChannel
+    #
+    #     if member.id == bot.user.id
+    #         return
+    #
+    #     member_count = len(discord.VoiceChannel)
+    #
+    #     if voice_state is not None and len(member_count) == 1:
+    #         await voice_state.disconnect()
+
     # connects to lavalink host
     async def connect_nodes():
         await bot.wait_until_ready()
@@ -58,7 +70,5 @@ async def main():
 
     await bot.start(token)
 
+
 asyncio.run((main()))
-
-
-
