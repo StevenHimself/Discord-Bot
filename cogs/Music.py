@@ -1,3 +1,5 @@
+import asyncio
+
 import discord
 import wavelink
 from discord import app_commands
@@ -27,7 +29,7 @@ class Music(commands.Cog):
             await vc.play(tracks[0])
 
             embed = discord.Embed(title=tracks[0].title, color=discord.Colour.red(), url=tracks[0].uri,
-                                  description="Playing from YouTube! ▶️")
+                                  description="Playing from YouTube! <:youtube:1133117120109101106>")
             embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
             await interaction.followup.send(embed=embed)
 
@@ -35,7 +37,7 @@ class Music(commands.Cog):
             vc.queue.put(item=tracks[0])
 
             embed = discord.Embed(title=tracks[0].title, color=discord.Colour.red(), url=tracks[0].uri,
-                                  description="Queued from YouTube ▶️")
+                                  description="Queued from YouTube <:youtube:1133117120109101106>")
             embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
 
             await interaction.followup.send(embed=embed)
@@ -55,7 +57,7 @@ class Music(commands.Cog):
             await vc.play(tracks[0])
 
             embed = discord.Embed(title=tracks[0].title, color=discord.Colour.orange(), url=tracks[0].uri,
-                                  description="Playing from SoundCloud! ☁️")
+                                  description="Playing from SoundCloud! <:soundcloud:335112782821195776>")
             embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
 
             await interaction.followup.send(embed=embed)
@@ -64,7 +66,7 @@ class Music(commands.Cog):
             vc.queue.put(item=tracks[0])
 
             embed = discord.Embed(title=tracks[0].title, color=discord.Colour.orange(), url=tracks[0].uri,
-                                  description="Queued from SoundCloud! ☁️")
+                                  description="Queued from SoundCloud! <:soundcloud:335112782821195776>")
             embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
             await interaction.followup.send(embed=embed)
 
@@ -143,6 +145,26 @@ class Music(commands.Cog):
             embed = discord.Embed(title="I am not connected to a voice channel. 😔", color=discord.Colour.blurple())
             await interaction.followup.send(embed=embed)
 
+    # # clears th queue
+    # @app_commands.command(name='clear', description='Clears the queue')
+    # async def clear(self, interaction: discord.Interaction):
+    #     await interaction.response.defer()
+    #     vc = interaction.guild.voice_client
+    #     if vc:
+    #         if not vc.queue.is_empty:
+    #             await vc.stop()
+    #             vc.queue.clear()
+    #             embed = discord.Embed(title="Queue cleared! ✅", color=discord.Colour.blurple())
+    #             await interaction.followup.send(embed=embed)
+    #
+    #         elif vc.queue.is_empty:
+    #             embed = discord.Embed(title="Queue is empty... 😔", color=discord.Colour.blurple())
+    #             await interaction.followup.send(embed=embed)
+    #
+    #     elif not vc:
+    #         embed = discord.Embed(title="I am not connected to a voice channel. 😔", color=discord.Colour.blurple())
+    #         await interaction.followup.send(embed=embed)
+
     # connect to channel command
     @app_commands.command(name='connect', description='Connects bot to your current voice channel..')
     async def connect(self, interaction: discord.Interaction, *, channel: discord.VoiceChannel | None = None):
@@ -175,6 +197,14 @@ class Music(commands.Cog):
         elif not vc:
             embed = discord.Embed(title="I am not connected to a voice channel. 🤨", color=discord.Colour.blurple())
             await interaction.followup.send(embed=embed)
+
+    # @commands.Cog.listener()
+    # async def on_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
+    #     if isinstance(error, commands.CommandOnCooldown):
+    #         await interaction.response.send_message(f"Slow down there {interaction.user.mention}!"
+    #                                                 f"\n wait for {error.retry_after} seconds!", ephemeral=True)
+    #     else:
+    #         raise error
 
 
 async def setup(bot):
