@@ -50,6 +50,26 @@ async def main():
         print(f"Node <{node.id}> is ready")
         wavelink.Player.autoplay = True
 
+    @bot.event
+    async def on_wavelink_track_start(interaction: discord.Interaction, player: wavelink.Player,
+                                      track: wavelink.YouTubeTrack or wavelink.SoundCloudTrack):
+        await interaction.response.defer()
+        embed = discord.Embed(title="Current track", color=discord.Colour.blurple(),
+                              description=f"Currently playing {player.current}")
+        await interaction.followup.send(embed=embed)
+
+    # @bot.event
+    # async def on_wavelink_track_end(interaction: discord.Interaction, player: wavelink.Player,
+    #                                 track: wavelink.YouTubeTrack or wavelink.SoundCloudTrack)
+    #     await interaction.response.defer()
+    #     if player.queue.is_empty:
+    #         embed = discord.Embed(title="Queue is empty!", color=discord.Colour.blurple(),
+    #                               description="Queue another song to continue playing!")
+    #         await interaction.followup.send(embed=embed)
+    #
+    #     elif not player.queue.is_empty:
+
+
     # bot will disconnect from voice channel if alone
     @bot.event
     async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
@@ -61,7 +81,7 @@ async def main():
     # connects to lavalink host
     async def connect_nodes():
         await bot.wait_until_ready()
-        node: wavelink.Node = wavelink.Node(uri='us.lavalink.alexanderof.xyz:2333', password='lavalink')
+        node: wavelink.Node = wavelink.Node(uri='lava.horizxon.tech:80', password='horizxon.tech')
         await wavelink.NodePool.connect(client=bot, nodes=[node])
 
     await bot.start(token)
