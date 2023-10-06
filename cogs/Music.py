@@ -177,7 +177,7 @@ class Music(commands.Cog):
 
         if not vc:
             await channel.connect(cls=wavelink.Player())
-            embed = discord.Embed(title=f"Connected to {interaction.user.voice.channel} ✅",
+            embed = discord.Embed(title=f"Connected to {interaction.user.voice.channel} <a:PikaWave:558719629967491094>",
                                   color=discord.Colour.green())
             await interaction.followup.send(embed=embed)
         elif vc:
@@ -191,7 +191,8 @@ class Music(commands.Cog):
         vc = interaction.guild.voice_client
         if vc:
             await vc.disconnect()
-            embed = discord.Embed(title=f"Disconnected from {interaction.user.voice.channel}. 👋",
+            embed = discord.Embed(title=f"Disconnected from {interaction.user.voice.channel}. <a:PikaWave"
+                                        f":558719629967491094>",
                                   color=discord.Colour.dark_red())
             await interaction.followup.send(embed=embed)
         elif not vc:
