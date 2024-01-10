@@ -17,7 +17,7 @@ class Text(commands.Cog):
         print("Text commands loaded ✔️")
 
     # TODO
-    # a command that lists all commands and their uses
+    # lists all bot commands
     # async def help(self, interaction: discord.Interaction):
 
     @app_commands.command(name="quote", description="Generates a random quote from different categories")
