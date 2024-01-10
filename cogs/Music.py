@@ -29,7 +29,7 @@ class Music(commands.Cog):
             await vc.play(tracks[0])
 
             embed = discord.Embed(title=tracks[0].title, color=discord.Colour.red(), url=tracks[0].uri,
-                                  description="Playing from YouTube! <:youtube:1133117120109101106>")
+                                  description="Playing from YouTube!  <:youtube:1133117120109101106>")
             embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
             await interaction.followup.send(embed=embed)
 
@@ -37,7 +37,7 @@ class Music(commands.Cog):
             vc.queue.put(item=tracks[0])
 
             embed = discord.Embed(title=tracks[0].title, color=discord.Colour.red(), url=tracks[0].uri,
-                                  description="Queued from YouTube <:youtube:1133117120109101106>")
+                                  description="Queued from YouTube  <:youtube:1133117120109101106>")
             embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
 
             await interaction.followup.send(embed=embed)
@@ -57,7 +57,7 @@ class Music(commands.Cog):
             await vc.play(tracks[0])
 
             embed = discord.Embed(title=tracks[0].title, color=discord.Colour.orange(), url=tracks[0].uri,
-                                  description="Playing from SoundCloud! <:soundcloud:335112782821195776>")
+                                  description="Playing from SoundCloud!  <:soundcloud:1174137028473008209>")
             embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
 
             await interaction.followup.send(embed=embed)
@@ -66,7 +66,7 @@ class Music(commands.Cog):
             vc.queue.put(item=tracks[0])
 
             embed = discord.Embed(title=tracks[0].title, color=discord.Colour.orange(), url=tracks[0].uri,
-                                  description="Queued from SoundCloud! <:soundcloud:335112782821195776>")
+                                  description="Queued from SoundCloud!  <:soundcloud:1174137028473008209>")
             embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
             await interaction.followup.send(embed=embed)
 
@@ -177,8 +177,9 @@ class Music(commands.Cog):
 
         if not vc:
             await channel.connect(cls=wavelink.Player())
-            embed = discord.Embed(title=f"Connected to {interaction.user.voice.channel} <a:PikaWave:558719629967491094>",
-                                  color=discord.Colour.green())
+            embed = discord.Embed(
+                title=f"Connected to {interaction.user.voice.channel} <a:pikawave:956858765330767893>",
+                color=discord.Colour.green())
             await interaction.followup.send(embed=embed)
         elif vc:
             embed = discord.Embed(title="I am already connected to a voice channel. 🤨", color=discord.Colour.blurple())
@@ -191,9 +192,9 @@ class Music(commands.Cog):
         vc = interaction.guild.voice_client
         if vc:
             await vc.disconnect()
-            embed = discord.Embed(title=f"Disconnected from {interaction.user.voice.channel}. <a:PikaWave"
-                                        f":558719629967491094>",
-                                  color=discord.Colour.dark_red())
+            embed = discord.Embed(
+                title=f"Disconnected from {interaction.user.voice.channel}. <a:pikawave:956858765330767893>",
+                color=discord.Colour.dark_red())
             await interaction.followup.send(embed=embed)
         elif not vc:
             embed = discord.Embed(title="I am not connected to a voice channel. 🤨", color=discord.Colour.blurple())
