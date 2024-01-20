@@ -1,2 +1,5 @@
 discord.py
-wavelink==2.6.2
+wavelink~=3.1.2
+lavalink
+aiohttp~=3.8.6
+python-dotenv~=1.0.0

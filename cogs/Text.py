@@ -46,6 +46,7 @@ class Text(commands.Cog):
                                       app_commands.Choice(name="success", value="success"),
                                       ])
     async def quote(self, interaction: discord.Interaction, categories: app_commands.Choice[str]):
+        """random quote from specific category"""
         await interaction.response.defer()
         async with aiohttp.ClientSession() as session:
             async with session.get(f'https://api.api-ninjas.com/v1/quotes?category={categories.value}',
@@ -106,13 +107,13 @@ class Text(commands.Cog):
                 embed.set_footer(text=f'{author} 💬')
                 await interaction.followup.send(embed=embed)
 
-    @commands.Cog.listener()
-    async def on_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
-        if isinstance(error, commands.CommandOnCooldown):
-            await interaction.response.send_message(f"Slow down there {interaction.user.mention}!"
-                                                    f"\n wait for {error.retry_after} seconds!", ephemeral=True)
-        else:
-            raise error
+    # @commands.Cog.listener()
+    # async def on_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
+    #     if isinstance(error, commands.CommandOnCooldown):
+    #         await interaction.response.send_message(f"Slow down there {interaction.user.mention}!"
+    #                                                 f"\n wait for {error.retry_after} seconds!", ephemeral=True)
+    #     else:
+    #         raise error
 
 
 async def setup(bot):
