@@ -9,11 +9,11 @@ jobs:
     steps:
     # runner checks out latest code
     - name: ✔️ Check out code
-    - uses: actions/checkout@v4
+      uses: actions/checkout@v4
 
     # install python
     - name: 🐍  Set up Python 3.11.4
-    - uses: actions/setup-python@v4
+      uses: actions/setup-python@v4
       with:
         python-version: 3.11.4
         cache: 'pip'
