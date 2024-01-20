@@ -8,7 +8,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
-token = os.getenv('TOKEN')
+token = os.environ.get('DISCORD_TOKEN')
 
 # initiating bot
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all(), application_id=1116698756046389300)
