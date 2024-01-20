@@ -1,5 +1,3 @@
-import asyncio
-
 import discord
 import wavelink
 from discord import app_commands
