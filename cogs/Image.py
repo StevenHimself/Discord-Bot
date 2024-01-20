@@ -17,7 +17,8 @@ class Image(commands.Cog):
     # Generates random cat images/gifs from API
     @app_commands.command(name="cat", description="Generates a random cat image/gif")
     @app_commands.checks.cooldown(1, 5, key=lambda i: i.user.id)
-    async def cat_pic(self, interaction: discord.Interaction):
+    async def cat(self, interaction: discord.Interaction):
+        """random cat image/gif"""
         await interaction.response.defer()
         async with aiohttp.ClientSession() as session:
             async with session.get('https://api.thecatapi.com/v1/images/search') as response:
@@ -30,7 +31,8 @@ class Image(commands.Cog):
     # Generates random dog images/gifs from API
     @app_commands.command(name="dog", description="Generates a random dog image/gif")
     @app_commands.checks.cooldown(1, 5, key=lambda i: i.user.id)
-    async def dog_pic(self, interaction: discord.Interaction):
+    async def dog(self, interaction: discord.Interaction):
+        """random dog image/gif"""
         await interaction.response.defer()
         async with aiohttp.ClientSession() as session:
             async with session.get('https://dog.ceo/api/breeds/image/random') as response:
@@ -40,13 +42,14 @@ class Image(commands.Cog):
                 embed.set_image(url=dog['message'])
                 await interaction.followup.send(embed=embed)
 
-    @commands.Cog.listener()
-    async def on_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
-        if isinstance(error, commands.CommandOnCooldown):
-            await interaction.response.send_message(f"Slow down there {interaction.user.mention}!"
-                                                    f"\n wait for {error.retry_after} seconds!", ephemeral=True)
-        else:
-            raise error
+    # # todo - fix cooldown error message
+    # @commands.Cog.listener()
+    # async def on_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
+    #     if isinstance(error, commands.CommandOnCooldown):
+    #         await interaction.response.send_message(f"Slow down there {interaction.user.mention}!"
+    #                                                 f"\n wait for {error.retry_after} seconds!", ephemeral=True)
+    #     else:
+    #         raise error
 
 
 async def setup(bot):
