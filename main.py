@@ -44,7 +44,7 @@ async def main():
 
         current_branch = await get_current_branch()
 
-        if current_branch != "master":
+        if current_branch.strip() != "master":
             print("This is a non-master branch, bot will shut down in 1 minute.")
             bot.loop.create_task(shutdown_after_delay())
         else:
