@@ -8,7 +8,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
-token = os.getenv('TOKEN')
+token = os.getenv('DISCORD_TOKEN')
 
 # initiating bot
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all(), application_id=1116698756046389300)
@@ -27,7 +27,7 @@ async def main():
     # bot goes online
     @bot.event
     async def on_ready():
-        print("Bot online, Beep Boop.")
+        print("Stubee Bot online, Beep Boop.")
         # bot.loop.create_task(setup_hook())  # continuous attempt to connect to a node
 
     async def on_wavelink_node_ready(self, payload: wavelink.NodeReadyEventPayload) -> None:

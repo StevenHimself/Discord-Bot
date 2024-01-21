@@ -1,9 +1,7 @@
-import discord
-from discord import app_commands
 from discord.ext import commands
 
 
-class CommandManagement(commands.Cog):
+class BotManagement(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -11,6 +9,13 @@ class CommandManagement(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print("Command Management loaded ✔️")
+
+    @commands.command()
+    async def shutdown(self, ctx):
+        """shuts down the bot"""
+        print("Shutting down. Bot offline.")
+        await ctx.send("Stubee is going to sleep 💤")
+        await ctx.bot.close()
 
     @commands.command()
     async def sync(self, ctx) -> None:
@@ -30,4 +35,4 @@ class CommandManagement(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(CommandManagement(bot))
+    await bot.add_cog(BotManagement(bot))
