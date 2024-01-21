@@ -16,6 +16,7 @@ jobs:
       run: |
         echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" >> $GITHUB_ENV
         echo "::add-mask::$DISCORD_TOKEN"
+        export DISCORD_TOKEN=$DISCORD_TOKEN
 
     # install python
     - name: 🐍  Set up Python 3.11.4
