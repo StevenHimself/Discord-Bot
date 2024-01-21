@@ -14,8 +14,14 @@ token = os.getenv('DISCORD_TOKEN')
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all(), application_id=1116698756046389300)
 
 
-# load/unload cog functions
+async def shutdown_after_delay():
+    """shuts down bot after delay"""
+    await asyncio.sleep(7)
+    await bot.close()
+
+
 async def load():
+    """loads cogs"""
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py'):
             await bot.load_extension(f'cogs.{filename[:-3]}')
@@ -24,13 +30,16 @@ async def load():
 async def main():
     await load()
 
-    # bot goes online
     @bot.event
     async def on_ready():
+        """starts up bot"""
         print("Stubee Bot online, Beep Boop.")
+        # (dev only) gracefully shuts down bot for workflow. comment out if more runtime is needed.
+        bot.loop.create_task(shutdown_after_delay())
         # bot.loop.create_task(setup_hook())  # continuous attempt to connect to a node
 
     async def on_wavelink_node_ready(self, payload: wavelink.NodeReadyEventPayload) -> None:
+        """Confirms a successful connection to a lavalink node"""
         print(f'{payload.node}')
         logging.info(f"Successfully connected Wavelink Node: {payload.node!r} | Resumed: {payload.resumed}")
 
