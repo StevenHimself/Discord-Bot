@@ -7,6 +7,7 @@ import wavelink
 from discord.ext import commands
 from dotenv import load_dotenv
 
+print("Starting stubee bot")
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 
