@@ -32,6 +32,28 @@ class Music(commands.Cog):
         print("Successfully connected to Lavalink Node! ✔️")
 
     @commands.Cog.listener()
+    async def on_wavelink_track_start(self, payload: wavelink.TrackStartEventPayload) -> None:
+        player: wavelink.Player | None = payload.player
+        if not player:
+            return
+
+        original: wavelink.Playable | None = payload.original
+        song: wavelink.Playable = payload.track
+
+        embed: discord.Embed = discord.Embed(title="Now Playing 🎵", color=discord.Colour.teal())
+        embed.description = f"**{song.title}** by `{song.author}`"
+        embed.set_footer(text=f"Request made by {song.source}")
+
+        if song.artwork:
+            embed.set_image(url=song.artwork)
+        if song.album.name:
+            embed.add_field(name="Album", value=song.album.name)
+        if song.length:
+            embed.add_field(name="Length", value=song.length)
+
+        await player.channel.send(embed=embed)
+
+    @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState,
                                     after: discord.VoiceState):
         """bot will automatically disconnect if alone in voice channel"""
@@ -81,12 +103,14 @@ class Music(commands.Cog):
             song: wavelink.Playable = songs[0]
             await player.queue.put_wait(song)
             embed = discord.Embed(title=f"Added {song} to the queue! ✅", color=discord.Colour.teal())
+            embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
             await interaction.followup.send(embed=embed)
 
         if not player.playing:
             # if not playing, then play song immediately
             await player.play(player.queue.get(), volume=30)
             embed = discord.Embed(title=f"Now playing ({song}) 🎵", color=discord.Colour.teal())
+            embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
             await interaction.followup.send(embed=embed)
 
     @app_commands.command(name='skip', description='Skips current song.')
@@ -101,7 +125,12 @@ class Music(commands.Cog):
 
         if player.paused:
             embed = discord.Embed(title="I am not playing anything to skip. ⛔", color=discord.Colour.red())
-            interaction.followup.send(embed=embed)
+            await interaction.followup.send(embed=embed)
+            return
+        if not player.queue:
+            embed = discord.Embed(title="Queue is empty, no more tracks to skip to. ⛔", color=discord.Colour.red())
+            await interaction.followup.send(embed=embed)
+            return
         else:
             await player.skip(force=True)
             embed = discord.Embed(title="Track was skipped! ⏩", color=discord.Colour.teal())
