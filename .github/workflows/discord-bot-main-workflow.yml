@@ -11,14 +11,6 @@ jobs:
     - name: ✔️ Check out code
       uses: actions/checkout@v4
 
-#    # set up environment variables
-#    - name: ⚙️ Set environment variables
-#      run: |
-#        echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" >> $GITHUB_ENV
-#        echo "::add-mask::$DISCORD_TOKEN"
-#      env:
-#        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-
     # install python
     - name: 🐍  Set up Python 3.11.4
       uses: actions/setup-python@v4
@@ -38,10 +30,10 @@ jobs:
         pip install ruff
         ruff --output-format=github .
 
-#    # building app
-#    - name: 🔨 Build application
-#      env:
-#        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-#      run: |
-#        python main.py
-#      timeout-minutes: 5
+    # building app
+    - name: 🔨 Build application
+      env:
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      run: |
+        python main.py
+      timeout-minutes: 5
