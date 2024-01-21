@@ -34,9 +34,10 @@ async def main():
     async def on_ready():
         """starts up bot"""
         print("Stubee Bot online, Beep Boop.")
-        # (dev only) gracefully shuts down bot for workflow. comment out if more runtime is needed.
-        bot.loop.create_task(shutdown_after_delay())
         # bot.loop.create_task(setup_hook())  # continuous attempt to connect to a node
+
+        # (dev only) gracefully shuts down bot for workflow. comment out if more runtime is needed.
+        # bot.loop.create_task(shutdown_after_delay())
 
     async def on_wavelink_node_ready(self, payload: wavelink.NodeReadyEventPayload) -> None:
         """Confirms a successful connection to a lavalink node"""
