@@ -38,10 +38,10 @@ jobs:
         pip install ruff
         ruff --output-format=github .
 
-    # building app
-    - name: 🔨 Build application
-      env:
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-      run: |
-        python main.py
-      timeout-minutes: 5
+#    # building app
+#    - name: 🔨 Build application
+#      env:
+#        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+#      run: |
+#        python main.py
+#      timeout-minutes: 5
