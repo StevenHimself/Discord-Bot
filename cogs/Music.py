@@ -3,6 +3,7 @@ import wavelink
 from discord import app_commands
 from discord.ext import commands
 from typing import cast
+import logging
 
 
 class Music(commands.Cog):
@@ -13,6 +14,31 @@ class Music(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print("Music commands loaded ✔️")
+        self.bot.loop.create_task(self.setup_hook())
+
+    async def setup_hook(self) -> None:
+        """connects to lavalink host"""
+        print("Attempting to connect to Lavalink node...")
+        nodes = [wavelink.Node(uri='http://us1.lavalink.creavite.co:20080', password='auto.creavite.co')]
+        try:
+            await wavelink.Pool.connect(nodes=nodes, client=self.bot, cache_capacity=100)
+        except Exception as e:
+            logging.error(f"Exception occurred: {e}")
+
+    @commands.Cog.listener()
+    async def on_wavelink_node_ready(self, payload: wavelink.NodeReadyEventPayload) -> None:
+        """Confirms a successful connection to a lavalink node"""
+        logging.info(f"Successfully connected Wavelink Node: {payload.node!r} | Resumed: {payload.resumed}")
+        print("Successfully connected to Lavalink Node! ✔️")
+
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState,
+                                    after: discord.VoiceState):
+        """bot will automatically disconnect if alone in voice channel"""
+        voice_state = member.guild.voice_client
+
+        if voice_state is not None and len(voice_state.channel.members) == 1:
+            await voice_state.disconnect()
 
     @app_commands.command(name='play', description='Plays a song')
     async def play(self, interaction: discord.Interaction, *, song: str) -> None:
@@ -26,7 +52,7 @@ class Music(commands.Cog):
 
         if not player:
             try:
-                player = await interaction.user.voice.channel(cls=wavelink.Player)  # type: ignore
+                player = await interaction.user.voice.channel.connect(cls=wavelink.Player)  # type: ignore
             except AttributeError:
                 embed = discord.Embed(title="I am not connected to a voice channel. 🤨", color=discord.Colour.red())
                 await interaction.followup.send(embed=embed)
@@ -48,16 +74,19 @@ class Music(commands.Cog):
         if isinstance(songs, wavelink.Playlist):
             # if passed argument is a playlist
             added: int = await player.queue.put_wait(songs)
-            embed = discord.Embed(title=f"Added ({added} songs) to the queue ✅",
-                                  color=discord.Colour.teal())
+            embed = discord.Embed(title=f"Added ({added} songs) to the queue ✅",color=discord.Colour.teal())
+            await interaction.followup.send(embed=embed)
         else:
             song: wavelink.Playable = songs[0]
             await player.queue.put_wait(song)
             embed = discord.Embed(title=f"Added {song} to the queue!")
+            await interaction.followup.send(embed=embed)
 
         if not player.playing:
             # if not playing, then play song immediately
             await player.play(player.queue.get(), volume=30)
+            embed = discord.Embed(title=f"Now playing ({song}) 🎵", color=discord.Colour.teal())
+            await interaction.followup.send(embed=embed)
 
     @app_commands.command(name='skip', description='Skips current song.')
     async def skip(self, interaction: discord.Interaction) -> None:
