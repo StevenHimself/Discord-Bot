@@ -44,3 +44,4 @@ jobs:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       run: |
         python main.py
+      timeout-minutes: 5
