@@ -34,7 +34,7 @@ async def main():
     async def on_ready():
         """starts up bot"""
         print("Stubee Bot online, Beep Boop. 🤖")
-        # bot.loop.create_task(shutdown_after_delay()) # for workflow testing only.
+        bot.loop.create_task(shutdown_after_delay())  # leave this on when pushing to main to prevent hanging workflow
 
     await bot.start(token)
 
