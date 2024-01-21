@@ -11,12 +11,13 @@ jobs:
     - name: ✔️ Check out code
       uses: actions/checkout@v4
 
-    # set up environment variables
-    - name : ⚙️ Set environment variables
-      run: |
-        echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" >> $GITHUB_ENV
-        echo "::add-mask::$DISCORD_TOKEN"
-        export DISCORD_TOKEN=$DISCORD_TOKEN
+#    # set up environment variables
+#    - name : ⚙️ Set environment variables
+#      run: |
+#        echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" >> $GITHUB_ENV
+#        echo "::add-mask::$DISCORD_TOKEN"
+#      env:
+#          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
 
     # install python
     - name: 🐍  Set up Python 3.11.4
@@ -39,5 +40,7 @@ jobs:
 
     # building app
     - name: 🔨 Build application
+      env:
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       run: |
         python main.py
