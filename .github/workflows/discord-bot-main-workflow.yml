@@ -1,4 +1,4 @@
-name: discord-bot-ci
+name: discord-bot-main
 on:
   push:
     branches:
