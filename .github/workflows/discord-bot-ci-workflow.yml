@@ -26,7 +26,9 @@ jobs:
 
     # set up environment variables
     - name : ⚙️ Set environment variables
-      run: echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" >> $GITHUB_ENV
+      run: |
+        echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" >> $GITHUB_ENV
+        echo "::add-mask::$DISCORD_TOKEN"
 
     # use ruff to lint code
     - name: 📝 Lint code
