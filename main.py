@@ -23,7 +23,7 @@ async def get_current_branch():
 
 async def shutdown_after_delay():
     """shuts down bot after delay"""
-    await asyncio.sleep(60)
+    await asyncio.sleep(150)
     await bot.close()
 
 

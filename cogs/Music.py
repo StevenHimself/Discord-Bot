@@ -40,7 +40,8 @@ class Music(commands.Cog):
         if voice_state is not None and len(voice_state.channel.members) == 1:
             await voice_state.disconnect()
 
-    @app_commands.command(name='play', description='Plays a song')
+    @app_commands.command(name='play', description='Plays a song from YouTube/SoundCloud (defaults to YouTube without '
+                                                   'platform-specific URL).')
     async def play(self, interaction: discord.Interaction, *, song: str) -> None:
         """plays a song"""
         await interaction.response.defer()
@@ -74,12 +75,12 @@ class Music(commands.Cog):
         if isinstance(songs, wavelink.Playlist):
             # if passed argument is a playlist
             added: int = await player.queue.put_wait(songs)
-            embed = discord.Embed(title=f"Added ({added} songs) to the queue ✅",color=discord.Colour.teal())
+            embed = discord.Embed(title=f"Added ({added} songs) to the queue! ✅", color=discord.Colour.teal())
             await interaction.followup.send(embed=embed)
         else:
             song: wavelink.Playable = songs[0]
             await player.queue.put_wait(song)
-            embed = discord.Embed(title=f"Added {song} to the queue!")
+            embed = discord.Embed(title=f"Added {song} to the queue! ✅", color=discord.Colour.teal())
             await interaction.followup.send(embed=embed)
 
         if not player.playing:
@@ -98,7 +99,7 @@ class Music(commands.Cog):
             await interaction.followup.send(embed=embed)
             return
 
-        if not player.is_playing():
+        if player.paused:
             embed = discord.Embed(title="I am not playing anything to skip. ⛔", color=discord.Colour.red())
             interaction.followup.send(embed=embed)
         else:
@@ -139,7 +140,7 @@ class Music(commands.Cog):
             await interaction.followup.send(embed=embed)
             return
 
-        if player.queue.is_empty:
+        if not player.queue:
             embed = discord.Embed(title="Queue is empty ⛔", color=discord.Colour.red())
             await interaction.followup.send(embed=embed)
             return
