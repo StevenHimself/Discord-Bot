@@ -103,15 +103,27 @@ class Music(commands.Cog):
         else:
             song: wavelink.Playable = songs[0]
             await player.queue.put_wait(song)
-            embed = discord.Embed(title=f"Added {song} to the queue! ✅", color=discord.Colour.teal())
+            embed = discord.Embed(title=f"Added [{song}] to the queue! ✅", color=discord.Colour.teal())
             embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
+            if song.artwork:
+                embed.set_image(url=song.artwork)
+            if song.album.name:
+                embed.add_field(name="Album", value=song.album.name)
+            if song.length:
+                embed.add_field(name="Length", value=song.length)
             await interaction.followup.send(embed=embed)
 
         if not player.playing:
             # if not playing, then play song immediately
             await player.play(player.queue.get(), volume=30)
-            embed = discord.Embed(title=f"Now playing ({song}) 🎵", color=discord.Colour.teal())
+            embed = discord.Embed(title=f"Now playing [{song}] 🎵", color=discord.Colour.teal())
             embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
+            if song.artwork:
+                embed.set_image(url=song.artwork)
+            if song.album.name:
+                embed.add_field(name="Album", value=song.album.name)
+            if song.length:
+                embed.add_field(name="Length", value=song.length)
             await interaction.followup.send(embed=embed)
 
     @app_commands.command(name='skip', description='Skips current song.')
