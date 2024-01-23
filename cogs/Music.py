@@ -1,5 +1,3 @@
-import datetime
-
 import discord
 import wavelink
 from discord import app_commands
