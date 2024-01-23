@@ -76,7 +76,7 @@ class Music(commands.Cog):
 
         if not player:
             try:
-                player = await interaction.user.voice.channel.connect(cls=wavelink.Player)  # type: ignore
+                player = await interaction.user.voice.channel.connect(cls=wavelink.Player, self_deaf=True)
             except AttributeError:
                 embed = discord.Embed(title="I am not connected to a voice channel. 🤨", color=discord.Colour.red())
                 await interaction.followup.send(embed=embed)
@@ -199,7 +199,7 @@ class Music(commands.Cog):
 
         if not player:
             try:
-                player = await interaction.user.voice.channel.connect(cls=wavelink.Player())
+                player = await interaction.user.voice.channel.connect(cls=wavelink.Player(), self_deaf=True)
                 embed = discord.Embed(
                     title=f"Connected to {interaction.user.voice.channel} <a:pikawave:956858765330767893>",
                     color=discord.Colour.teal())
