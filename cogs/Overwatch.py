@@ -30,9 +30,9 @@ class Overwatch(commands.Cog):
                 raw = await response.text()
                 player_map = json.loads(raw)
                 username = player_map["username"]
-                avatar = player_map["avatar"]
+                # avatar = player_map["avatar"]
                 title = player_map["title"]
-                rank = player_map["competitive"]
+                # rank = player_map["competitive"]
 
         embed = discord.Embed(title=f'{username} - {title}', color=discord.Colour.teal())
         embed.set_author(name="Overwatch 2")
