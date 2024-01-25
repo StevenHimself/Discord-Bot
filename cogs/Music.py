@@ -164,7 +164,7 @@ class Music(commands.Cog):
         if player.playing:
             await player.pause(not player.paused)
             embed = discord.Embed(title="Track was paused! ⏸️", color=discord.Colour.teal())
-            embed.set_footer(text=f"Resumed by {interaction.user}", icon_url=interaction.user.display_avatar)
+            embed.set_footer(text=f"Paused by {interaction.user}", icon_url=interaction.user.display_avatar)
             await interaction.followup.send(embed=embed)
         else:
             await player.pause(player.paused)
