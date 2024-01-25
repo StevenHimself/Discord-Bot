@@ -115,8 +115,8 @@ class Music(commands.Cog):
 
         if not player.playing:
             # if not playing, then play song immediately
-            await player.play(player.queue.get(), volume=30)
-            embed = discord.Embed(title=f"Now playing [{song}] 🎵", color=discord.Colour.teal())
+            await player.play(player.queue.get(), volume=7)
+            embed = discord.Embed(title=f"Now playing [{song}] 🎵", color=discord.Colour.teal(), url=song.uri)
             embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
             if song.artwork:
                 embed.set_image(url=song.artwork)
