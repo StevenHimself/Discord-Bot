@@ -19,7 +19,7 @@ class Music(commands.Cog):
     async def setup_hook(self) -> None:
         """connects to lavalink host"""
         print("Attempting to connect to Lavalink node...")
-        nodes = [wavelink.Node(uri='http://us1.lavalink.creavite.co:20080', password='auto.creavite.co')]
+        nodes = [wavelink.Node(uri='http://lavalink-v4.teramont.net:25569', password='eHKuFcz67k4lBS64')]
         try:
             await wavelink.Pool.connect(nodes=nodes, client=self.bot, cache_capacity=100)
         except Exception as e:
