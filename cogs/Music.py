@@ -19,7 +19,7 @@ class Music(commands.Cog):
     async def setup_hook(self) -> None:
         """connects to lavalink host"""
         print("Attempting to connect to Lavalink node...")
-        nodes = [wavelink.Node(uri='http://lavalink-v4.teramont.net:25569', password='eHKuFcz67k4lBS64')]
+        nodes = [wavelink.Node(uri='http://lava-v4.ajieblogs.eu.org:80', password='https://dsc.gg/ajidevserver')]
         try:
             await wavelink.Pool.connect(nodes=nodes, client=self.bot, cache_capacity=100)
         except Exception as e:
@@ -95,6 +95,7 @@ class Music(commands.Cog):
                                   color=discord.Colour.red())
             await interaction.followup.send(embed=embed)
             return
+
         if isinstance(songs, wavelink.Playlist):
             # if passed argument is a playlist
             added: int = await player.queue.put_wait(songs)
