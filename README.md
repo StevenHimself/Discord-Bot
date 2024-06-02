@@ -14,6 +14,7 @@ This bot was originally made as a fun project to play around with on my own serv
 3. Images/GIFs
    - ```/cat``` - Displays random cat image or gif
    - ```/dog``` - Displays random dog image or gif
+   - ```/imagine``` - Displays an AI generated image based on user's prompt
 
 4. Text
    - ```/quote``` - Drops down menu with different categories to randomly generate a quote from.
