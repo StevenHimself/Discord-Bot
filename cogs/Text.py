@@ -107,13 +107,13 @@ class Text(commands.Cog):
                 embed.set_footer(text=f'{author} 💬')
                 await interaction.followup.send(embed=embed)
 
-    # @commands.Cog.listener()
-    # async def on_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
-    #     if isinstance(error, commands.CommandOnCooldown):
-    #         await interaction.response.send_message(f"Slow down there {interaction.user.mention}!"
-    #                                                 f"\n wait for {error.retry_after} seconds!", ephemeral=True)
-    #     else:
-    #         raise error
+    @commands.Cog.listener()
+    async def on_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
+        if isinstance(error, commands.CommandOnCooldown):
+            message = f"Slow down there {interaction.user.mention}! wait for {error.retry_after} seconds!"
+        else:
+            raise error
+        await self.bot.error(message, interaction)
 
 
 async def setup(bot):

@@ -16,12 +16,13 @@ class Help(commands.Cog):
     async def help(self, interaction: discord.Interaction):
         """help command"""
         await interaction.response.defer()
-        embed = discord.Embed(title="Stubee Commands", color=discord.Colour.teal())
-        embed.set_author(url=interaction.user.avatar)
-        embed.set_field_at(name="MUSIC", value="```play```, ```skip```, ```toggle```, ```queue```", inline=False)
-        embed.set_field_at(name="IMAGES/GIFS", value="```cat```, ```dog```", inline=False)
-        embed.set_field_at(name="TEXT", value="```quote```",inline=False)
-        embed.set_field_at(name="GAMES", value="```overwatch```",inline=False)
+        embed = discord.Embed(title="Commands", color=discord.Colour.teal())
+        embed.set_thumbnail(url="https://imgur.com/FSaIt1c")
+        embed.set_author(name="stubee bot", url="https://github.com/StevenHimself/Discord-Bot")
+        embed.add_field(name="__Music__", value="play, skip, toggle, volume, queue", inline=False)
+        embed.add_field(name="__Images/Gifs__", value="dog, cat, imagine", inline=False)
+        embed.add_field(name="__Text__", value="quote", inline=False)
+        embed.add_field(name="__Games__", value="overwatch", inline=False)
         await interaction.followup.send(embed=embed)
 
 

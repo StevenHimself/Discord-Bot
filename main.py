@@ -23,7 +23,7 @@ async def get_current_branch():
 
 async def shutdown_after_delay():
     """shuts down bot after delay"""
-    await asyncio.sleep(150)
+    await asyncio.sleep(100000)
     await bot.close()
 
 
@@ -41,6 +41,9 @@ async def main():
     async def on_ready():
         """starts up bot"""
         print("Stubee Bot online, Beep Boop. 🤖")
+        await bot.tree.sync()
+        fmt = await bot.tree.sync()
+        print(f"Synced {len(fmt)} commands.")
 
         current_branch = await get_current_branch()
 

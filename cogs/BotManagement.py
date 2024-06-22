@@ -1,3 +1,5 @@
+import discord
+from discord import app_commands
 from discord.ext import commands
 
 
@@ -24,14 +26,22 @@ class BotManagement(commands.Cog):
         await ctx.send(f"Synced {len(fmt)} commands.")
 
     @commands.command()
+    async def clear(self, ctx) -> None:
+        """clears old commands"""
+        fmt = await ctx.bot.tree.clear_commands()
+        await ctx.send(f"Cleared {len(fmt)} commands.")
+
+    @commands.command()
     async def load(self, ctx, extension):
         """loads commands"""
-        ctx.bot.load_extension(f'cogs.{extension}')
+        await ctx.bot.load_extension(f'cogs.{extension}')
+        await ctx.send(f"Loaded {extension} commands!")
 
     @commands.command()
     async def unload(self, ctx, extension):
         """unloads commands"""
-        ctx.bot.unload_extension(f'cogs.{extension}')
+        await ctx.bot.unload_extension(f'cogs.{extension}')
+        await ctx.send(f"Unloaded {extension} commands!")
 
 
 async def setup(bot):

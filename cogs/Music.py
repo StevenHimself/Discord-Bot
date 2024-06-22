@@ -19,7 +19,7 @@ class Music(commands.Cog):
     async def setup_hook(self) -> None:
         """connects to lavalink host"""
         print("Attempting to connect to Lavalink node...")
-        nodes = [wavelink.Node(uri='http://lavalink.oryzen.xyz:80', password='oryzen.xyz')]
+        nodes = [wavelink.Node(uri='http://us1.lavalink.creavite.co:20080', password='auto.creavite.co')]
         try:
             await wavelink.Pool.connect(nodes=nodes, client=self.bot, cache_capacity=100)
         except Exception as e:
@@ -55,13 +55,18 @@ class Music(commands.Cog):
     #     await player.channel.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState,
-                                    after: discord.VoiceState):
+    async def on_voice_state_update(self, member: discord.Member, before, after):
         """bot will automatically disconnect if alone in voice channel"""
         voice_state = member.guild.voice_client
 
         if voice_state is not None and len(voice_state.channel.members) == 1:
             await voice_state.disconnect()
+
+    def convert_milliseconds(self, ms):
+        seconds = (ms // 1000) % 60
+        minutes = (ms // (1000 * 60)) % 60
+        hours = (ms // (1000 * 60 * 60)) % 24
+        return f"{hours:02}:{minutes:02}:{seconds:02}"
 
     @app_commands.command(name='play', description='Plays a song from YouTube/SoundCloud (defaults to YouTube without '
                                                    'platform-specific URL).')
@@ -111,12 +116,12 @@ class Music(commands.Cog):
             if song.album.name:
                 embed.add_field(name="Album", value=song.album.name)
             if song.length:
-                embed.add_field(name="Length", value=song.length)
+                embed.add_field(name="Track Length", value=self.convert_milliseconds(song.length))
             await interaction.followup.send(embed=embed)
 
         if not player.playing:
             # if not playing, then play song immediately
-            await player.play(player.queue.get(), volume=1)
+            await player.play(player.queue.get(), volume=4)
             embed = discord.Embed(title=f"Now playing [{song}] 🎵", color=discord.Colour.teal(), url=song.uri)
             embed.set_footer(text=f"Request made by {interaction.user}", icon_url=interaction.user.display_avatar)
             if song.artwork:
@@ -124,7 +129,7 @@ class Music(commands.Cog):
             if song.album.name:
                 embed.add_field(name="Album", value=song.album.name)
             if song.length:
-                embed.add_field(name="Length", value=song.length)
+                embed.add_field(name="Track Length", value=self.convert_milliseconds(song.length))
             await interaction.followup.send(embed=embed)
 
     @app_commands.command(name='skip', description='Skips current song.')
@@ -232,13 +237,30 @@ class Music(commands.Cog):
 
         await interaction.followup.send(embed=embed)
 
-    # @commands.Cog.listener()
-    # async def on_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
-    #     if isinstance(error, commands.CommandOnCooldown):
-    #         await interaction.response.send_message(f"Slow down there {interaction.user.mention}!"
-    #                                                 f"\n wait for {error.retry_after} seconds!", ephemeral=True)
-    #     else:
-    #         raise error
+    @app_commands.command(name='volume', description='Sets volume for bot.')
+    async def volume(self, interaction: discord.Interaction, volume: int) -> None:
+        """sets volume for bot"""
+        await interaction.response.defer()
+        player = cast(wavelink.Player, interaction.guild.voice_client)
+
+        if not player:
+            embed = discord.Embed(title="I am not connected to a voice channel. ⛔", color=discord.Colour.red())
+            await interaction.followup.send(embed=embed)
+            return
+
+        else:
+            await player.set_volume(volume)
+            embed = discord.Embed(title=f"Volume has been set to {volume}. 🔊",
+                                  color=discord.Colour.teal())
+            await interaction.followup.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
+        if isinstance(error, commands.CommandOnCooldown):
+            message = f"Slow down there {interaction.user.mention}! wait for {error.retry_after} seconds!"
+        else:
+            raise error
+        await self.bot.error(message, interaction)
 
 
 async def setup(bot):

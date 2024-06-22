@@ -3,3 +3,6 @@ wavelink~=3.1.2
 lavalink
 aiohttp~=3.9.1
 python-dotenv~=1.0.0
+craiyon.py
+
+
